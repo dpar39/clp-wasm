@@ -178,7 +178,6 @@
         const reserve = objToNum(state.reserve);
         const maxReserve = objToNum(state.maxReserve);
 
-        td = (obj) => obj.value * Math.pow(10, obj.base);
         const minTINRatioLb = maxDropRatio
           .neg()
           .mul(netAssetValue)
@@ -269,10 +268,8 @@ End
           juniorSupply: 10000,
           seniorSupply: 1000,
         };
-
         const state = testCase.state;
         const orders = testCase.orders;
-
         return calculateOptimalSolution(state, orders, weights);
       }
 
