@@ -178,6 +178,7 @@
         const reserve = objToNum(state.reserve);
         const maxReserve = objToNum(state.maxReserve);
 
+        td = (obj) => obj.value * Math.pow(10, obj.base);
         const minTINRatioLb = maxDropRatio
           .neg()
           .mul(netAssetValue)
@@ -246,7 +247,7 @@
         const template = `Maximize
  ${linearExpression(varWeights)}
 Subject To
-reserve: ${linearExpression([1, 1, -1, -1])} <= ${reserve}
+reserve: ${linearExpression([1, 1, -1, -1])} >= ${reserve.neg()}
 maxReserve: ${linearExpression([1, 1, -1, -1])} >= ${reserve.sub(maxReserve)}
 minTINRatioLb: ${linearExpression(minTINRatioLbCoeffs)} >= ${minTINRatioLb}
 maxTINRatioLb: ${linearExpression(maxTINRatioLbCoeffs)} >= ${maxTINRatioLb}
@@ -268,8 +269,10 @@ End
           juniorSupply: 10000,
           seniorSupply: 1000,
         };
+
         const state = testCase.state;
         const orders = testCase.orders;
+
         return calculateOptimalSolution(state, orders, weights);
       }
 
@@ -287,7 +290,7 @@ End
         const solObj = JSON.parse(solution);
         for (let i in solObj)
           if (typeof solObj[i] == "string" && solObj[i].length > 25) {
-            solObj[i] = Module.bn_round(solObj[i]);
+            solObj[i] = Module.bnRound(solObj[i]);
           }
         solutionElmt.value = JSON.stringify(solObj, null, 4);
       }
