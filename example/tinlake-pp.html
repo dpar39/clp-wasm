@@ -23,9 +23,6 @@
       body {
         height: 100vh;
       }
-      .border {
-        border: 1px solid red;
-      }
       textarea {
         width: 100%;
         font-family: "Courier New", Courier, monospace;
@@ -70,6 +67,29 @@
       .infeasible {
         background-color: rgb(197, 116, 116);
       }
+
+      h6 {
+        color: lightslategray;
+      }
+
+      .ui-slider .ui-slider-handle {
+        border: 1px solid black;
+        padding: 0px 4px !important;
+        width: 10px;
+      }
+
+      .out-slider {
+        border-color: transparent !important;
+      }
+
+      .out-slider .ui-slider-handle {
+        border: 1px solid green !important;
+        background-color: green;
+        opacity: 1 !important;
+      }
+      .bb {
+        border-bottom: 1px solid lightgray;
+      }
     </style>
   </head>
   <body onload="init()">
@@ -80,7 +100,7 @@
           <h3 class="text-center mt-2 mb-3">Tinlake solver playpen</h3>
         </div>
       </div>
-      <div class="row my-1">
+      <div class="row my-1 bb">
         <div class="col">
           <h6 class="">Weights</h6>
         </div>
@@ -103,8 +123,8 @@
           <input id="dropRedeemWeight" type="text" class="w-100" />
         </div>
       </div>
-      <hr />
-      <div class="row my-1">
+
+      <div class="row mt-3 mb-1 bb">
         <div class="col">
           <h6>State</h6>
         </div>
@@ -175,8 +195,8 @@
           />
         </div>
       </div>
-      <hr />
-      <div class="row my-1">
+
+      <div class="row my-1 bb">
         <div class="col">
           <h6>Orders</h6>
         </div>
@@ -187,7 +207,7 @@
           <table class="w-100">
             <tr>
               <td class="w-50">
-                <div id="tinInvestSlider" class="my-1 w-100"></div>
+                <div id="tinInvestSlider" class="mt-1 mb-2 w-100"></div>
                 <div id="tinInvestSliderOut" class="my-1 w-100"></div>
               </td>
               <td class="w-50">
@@ -203,7 +223,7 @@
           <table class="w-100">
             <tr>
               <td class="w-49">
-                <div id="dropInvestSlider" class="my-1 w-100"></div>
+                <div id="dropInvestSlider" class="mt-1 mb-2 w-100"></div>
                 <div id="dropInvestSliderOut" class="my-1 w-100"></div>
               </td>
               <td class="w-49">
@@ -219,7 +239,7 @@
           <table class="w-100">
             <tr>
               <td class="w-50">
-                <div id="tinRedeemSlider" class="my-1 w-100"></div>
+                <div id="tinRedeemSlider" class="mt-1 mb-2 w-100"></div>
                 <div id="tinRedeemSliderOut" class="my-1 w-100"></div>
               </td>
               <td class="w-50">
@@ -235,7 +255,7 @@
           <table class="w-100">
             <tr>
               <td class="w-49">
-                <div id="dropRedeemSlider" class="my-1 w-100"></div>
+                <div id="dropRedeemSlider" class="mt-1 mb-2 w-100"></div>
                 <div id="dropRedeemSliderOut" class="my-1 w-100"></div>
               </td>
               <td class="w-49">
@@ -247,8 +267,18 @@
           </table>
         </div>
       </div>
-
-      <div class="row h-25 mt-5">
+      <div class="row">
+        <div class="col">
+          <div class="btn btn-primary m-2" onclick="importTestCase()">
+            Import Test Case
+          </div>
+    
+          <div class="btn btn-primary m-2" onclick="exportTestCase()">
+            Export Test Case
+          </div>
+        </div>
+      </div>
+      <div class="row h-25 mt-3">
         <div class="col">
           <h5>Problem in LP format</h5>
           <textarea id="lpProblem" rows="10"></textarea>
@@ -305,8 +335,8 @@
         return resBN;
       }
 
-      function buildProblem() {
-        const testCase = {
+      function prepareProblem() {
+        return {
           weights: {
             tinInvest: getFloatParameter("tinInvestWeight"),
             dropInvest: getFloatParameter("dropInvestWeight"),
@@ -334,7 +364,45 @@
             dropRedeem: getBNParameter("dropRedeem"),
           },
         };
+      }
+
+      function buildProblem() {
+        const testCase = prepareProblem();
         solveProblem(testCase);
+      }
+
+      function exportTestCase() {
+        const json = prepareProblem();
+        const content = JSON.stringify(json, null, 4);
+        var a = document.createElement("a");
+        var file = new Blob([content], { type: "application/json" });
+        a.href = URL.createObjectURL(file);
+        a.download = "testCase.json";
+        a.click();
+      }
+
+      function importTestCase() {
+        const fileInput = document.createElement("input");
+        readFile = function (e) {
+          var file = e.target.files[0];
+          if (!file) {
+            return;
+          }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            const contents = e.target.result;
+            const testCase = JSON.parse(contents);
+            setUpUi(testCase);
+            document.body.removeChild(fileInput);
+          };
+          reader.readAsText(file);
+        };
+
+        fileInput.type = "file";
+        fileInput.style.display = "none";
+        fileInput.onchange = readFile;
+        document.body.appendChild(fileInput);
+        fileInput.click();
       }
 
       function solveProblem(testCase) {
@@ -369,16 +437,16 @@
       function setUpUi(testCase) {
         const orders = testCase.orders;
         const weights = testCase.weights || {
-          tinInvestWeight: 10000,
-          dropInvestWeight: 1000,
-          tinRedeemWeight: 100000,
-          dropRedeemWeight: 1000000,
+          tinInvest: 10000,
+          dropInvest: 1000,
+          tinRedeem: 100000,
+          dropRedeem: 1000000,
         };
         const state = testCase.state;
         // Setup weights
-        for (const weight in weights) {
-          const selW = `#${weight}`;
-          $(selW).attr({ value: weights[weight] });
+        for (const order of ordersList) {
+          const selW = `#${order}Weight`;
+          $(selW).attr({ value: weights[order] });
         }
 
         const minTinRatio = state.minTinRatio.value || 0.15;
@@ -452,13 +520,15 @@
           const parm = orders[parmName];
           setBigNumberParameter(parmName, orders[parmName]);
           const sliderSel = `#${parmName}SliderOut`;
-          $(sliderSel).slider({
-            min: 0,
-            disabled: true,
-            max: parm.max || parm.value * 2,
-            step: 1,
-            values: [parm.value],
-          });
+          $(sliderSel)
+            .slider({
+              min: 0,
+              disabled: true,
+              max: parm.max || parm.value * 2,
+              step: 1,
+              values: [parm.value],
+            })
+            .addClass("out-slider");
         }
       }
 
