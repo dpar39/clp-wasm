@@ -218,9 +218,9 @@ void ClpSimplexOther::dualRanging(int numberCheck, const int *which,
     } else {
       scaleFactor = 1.0 / objectiveScale_;
     }
-    if (costIncrease < 1.0e30)
+    if (costIncrease < OneE30)
       costIncrease *= scaleFactor;
-    if (costDecrease < 1.0e30)
+    if (costDecrease < OneE30)
       costDecrease *= scaleFactor;
     if (optimizationDirection_ == 1.0) {
       costIncreased[i] = costIncrease;
@@ -271,8 +271,8 @@ void ClpSimplexOther::checkDualRatios(CoinIndexedVector *rowArray,
   int *which;
   int iSection;
 
-  FloatT thetaDown = 1.0e31;
-  FloatT thetaUp = 1.0e31;
+  FloatT thetaDown = OneE31;
+  FloatT thetaUp = OneE31;
   int sequenceDown = -1;
   int sequenceUp = -1;
   FloatT alphaDown = 0.0;
@@ -442,11 +442,11 @@ void ClpSimplexOther::primalRanging(int numberCheck, const int *which,
     } else {
       scaleFactor = 1.0 / rhsScale_;
     }
-    if (valueIncrease < 1.0e30)
+    if (valueIncrease < OneE30)
       valueIncrease *= scaleFactor;
     else
       valueIncrease = COIN_DBL_MAX;
-    if (valueDecrease < 1.0e30)
+    if (valueDecrease < OneE30)
       valueDecrease *= scaleFactor;
     else
       valueDecrease = COIN_DBL_MAX;
@@ -500,7 +500,7 @@ ClpSimplexOther::primalRanging1(int whichIn, int whichOther)
 
       // we may need to swap sign
       FloatT way = wayIn;
-      FloatT theta = 1.0e30;
+      FloatT theta = OneE30;
       for (int iIndex = 0; iIndex < number; iIndex++) {
 
         int iRow = which[iIndex];
@@ -534,10 +534,10 @@ ClpSimplexOther::primalRanging1(int whichIn, int whichOther)
         }
       }
       if (whichIn != whichOther) {
-        if (theta < 1.0e30)
+        if (theta < OneE30)
           newValue -= theta * alphaOther;
         else
-          newValue = alphaOther > 0.0 ? -1.0e30 : 1.0e30;
+          newValue = alphaOther > 0.0 ? -OneE30 : OneE30;
       } else {
         newValue += theta * wayIn;
       }
@@ -579,7 +579,7 @@ void ClpSimplexOther::checkPrimalRatios(CoinIndexedVector *rowArray,
 
   // we need to swap sign if going down
   FloatT way = direction;
-  theta_ = 1.0e30;
+  theta_ = OneE30;
   for (int iIndex = 0; iIndex < number; iIndex++) {
 
     int iRow = which[iIndex];
@@ -1654,10 +1654,10 @@ ClpSimplexOther::crunch(FloatT *rhs, int *whichRow, int *whichColumn,
           up[iRow] = CoinMax(upper - rowLower2[iRow], 0.0) + tolerance;
         }
         // tighten row bounds
-        if (lower > -1.0e10)
+        if (lower > -OneE10)
           rowLower2[iRow] = CoinMax(rowLower2[iRow],
             lower - 1.0e-6 * (1.0 + CoinAbs(lower)));
-        if (upper < 1.0e10)
+        if (upper < OneE10)
           rowUpper2[iRow] = CoinMin(rowUpper2[iRow],
             upper + 1.0e-6 * (1.0 + CoinAbs(upper)));
       }
@@ -2066,7 +2066,7 @@ int ClpSimplexOther::parametrics(FloatT startingTheta, FloatT &endingTheta, Floa
       chgObjective = new FloatT[numberTotal];
       memset(chgObjective, 0, numberTotal * sizeof(FloatT));
       assert(!rowScale_);
-      FloatT maxTheta = 1.0e50;
+      FloatT maxTheta = OneE50;
       if (lowerChangeRhs || upperChangeRhs) {
         for (iRow = 0; iRow < numberRows_; iRow++) {
           FloatT lower = rowLower_[iRow];
@@ -2118,7 +2118,7 @@ int ClpSimplexOther::parametrics(FloatT startingTheta, FloatT &endingTheta, Floa
             }
           }
         }
-        if (maxTheta == 1.0e50)
+        if (maxTheta == OneE50)
           maxTheta = COIN_DBL_MAX;
       }
       if (maxTheta < 0.0) {
@@ -3020,17 +3020,17 @@ int ClpSimplexOther::parametrics(FloatT startingTheta, FloatT &endingTheta,
   for (int iRow = 0; iRow < numberRows_; iRow++) {
     FloatT lower = rowLower_[iRow];
     FloatT upper = rowUpper_[iRow];
-    if (lower < -1.0e30)
+    if (lower < -OneE30)
       lowerChange[numberColumns_ + iRow] = 0.0;
-    if (upper > 1.0e30)
+    if (upper > OneE30)
       upperChange[numberColumns_ + iRow] = 0.0;
   }
   for (int iColumn = 0; iColumn < numberColumns_; iColumn++) {
     FloatT lower = columnLower_[iColumn];
     FloatT upper = columnUpper_[iColumn];
-    if (lower < -1.0e30)
+    if (lower < -OneE30)
       lowerChange[iColumn] = 0.0;
-    if (upper > 1.0e30)
+    if (upper > OneE30)
       upperChange[iColumn] = 0.0;
   }
   // save unscaled version of changes
@@ -3098,7 +3098,7 @@ int ClpSimplexOther::parametrics(FloatT startingTheta, FloatT &endingTheta,
     objective_->setType(1);
     if (!returnCode) {
       FloatT saveDualBound = dualBound_;
-      dualBound_ = CoinMax(dualBound_, 1.0e15);
+      dualBound_ = CoinMax(dualBound_, OneE15);
       swapped = true;
       FloatT *temp;
       memcpy(saveLower, lower_, numberTotal * sizeof(FloatT));
@@ -3327,7 +3327,7 @@ int ClpSimplexOther::parametricsLoop(parametricsData &paramData,
       statusOfProblemInParametrics(factorType, data);
     canSkipFactorization = false;
     if (numberPrimalInfeasibilities_) {
-      if (largestPrimalError_ > 1.0e3 && startingTheta > 1.0e10) {
+      if (largestPrimalError_ > 1.0e3 && startingTheta > OneE10) {
         // treat as success
         problemStatus_ = 0;
         endingTheta = startingTheta;
@@ -3507,7 +3507,7 @@ void ClpSimplexOther::statusOfProblemInParametrics(int type, ClpDataSave &saveDa
   gutsOfSolution(NULL, NULL);
   FloatT realDualInfeasibilities = sumDualInfeasibilities_;
   // If bad accuracy treat as singular
-  if ((largestPrimalError_ > 1.0e15 || largestDualError_ > 1.0e15) && numberIterations_) {
+  if ((largestPrimalError_ > OneE15 || largestDualError_ > OneE15) && numberIterations_) {
     // trouble - go to recovery
     problemStatus_ = 10;
     return;
@@ -3663,7 +3663,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
   FloatT lastTheta = startingTheta;
   FloatT useTheta = startingTheta;
   while (problemStatus_ == -1) {
-    FloatT increaseTheta = CoinMin(endingTheta - lastTheta, 1.0e50);
+    FloatT increaseTheta = CoinMin(endingTheta - lastTheta, OneE50);
     // Get theta for bounds - we know can't crossover
     int pivotType = nextTheta(1, increaseTheta, paramData,
       NULL);
@@ -3922,7 +3922,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
             break;
           }
         }
-        CoinAssert(CoinAbs(dualOut_) < 1.0e50);
+        CoinAssert(CoinAbs(dualOut_) < OneE50);
         // if stable replace in basis
         int updateStatus = factorization_->replaceColumn(this,
           rowArray_[2],
@@ -4010,7 +4010,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
               int iSequence = pivotVariable_[iRow];
               FloatT oldLower = lowerCoefficient[iRow];
               FloatT oldUpper = upperCoefficient[iRow];
-              if (lower_[iSequence] > -1.0e30) {
+              if (lower_[iSequence] > -OneE30) {
                 //lowerGap[iRow]=value-lower_[iSequence];
                 FloatT alpha2 = alpha3 + lowerChange[iSequence];
                 if (alpha2 > 1.0e-8) {
@@ -4025,7 +4025,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
                 if (oldLower)
                   lowerCoefficient[iRow] = COIN_DBL_MIN;
               }
-              if (upper_[iSequence] < 1.0e30) {
+              if (upper_[iSequence] < OneE30) {
                 //upperGap[iRow]=-(value-upper_[iSequence]);
                 FloatT alpha2 = -(alpha3 + upperChange[iSequence]);
                 if (alpha2 > 1.0e-8) {
@@ -4086,9 +4086,9 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
               FloatT value = solution_[iSequence];
               FloatT change = movement * work[i];
               value -= change;
-              if (lower_[iSequence] > -1.0e30)
+              if (lower_[iSequence] > -OneE30)
                 lowerGap[iRow] = value - lower_[iSequence];
-              if (upper_[iSequence] < 1.0e30)
+              if (upper_[iSequence] < OneE30)
                 upperGap[iRow] = -(value - upper_[iSequence]);
               solution_[iSequence] = value;
               objectiveChange -= change * cost_[iSequence];
@@ -4171,7 +4171,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
         FloatT alpha = rowArray_[4]->denseVector()[pivotRow_];
         FloatT oldLower = lowerCoefficient[pivotRow_];
         FloatT oldUpper = upperCoefficient[pivotRow_];
-        if (lower_[sequenceIn_] > -1.0e30) {
+        if (lower_[sequenceIn_] > -OneE30) {
           lowerGap[pivotRow_] = value - lower_[sequenceIn_];
           FloatT alpha2 = alpha + lowerChange[sequenceIn_];
           if (alpha2 > 1.0e-8) {
@@ -4190,7 +4190,7 @@ int ClpSimplexOther::whileIterating(parametricsData &paramData, FloatT /*reportI
           if (oldLower)
             lowerCoefficient[pivotRow_] = COIN_DBL_MIN;
         }
-        if (upper_[sequenceIn_] < 1.0e30) {
+        if (upper_[sequenceIn_] < OneE30) {
           upperGap[pivotRow_] = -(value - upper_[sequenceIn_]);
           FloatT alpha2 = -(alpha + upperChange[sequenceIn_]);
           if (alpha2 > 1.0e-8) {
@@ -4491,7 +4491,7 @@ ClpSimplexOther::computeRhsEtc(parametricsData &paramData)
     largestChange = CoinMax(largestChange, CoinAbs(chgLower));
     FloatT chgUpper = upperChange[numberColumns_ + iRow];
     largestChange = CoinMax(largestChange, CoinAbs(chgUpper));
-    if (lower > -1.0e30 && upper < 1.0e30) {
+    if (lower > -OneE30 && upper < OneE30) {
       if (lower + maxTheta * chgLower > upper + maxTheta * chgUpper) {
         maxTheta = (upper - lower) / (chgLower - chgUpper);
       }
@@ -4514,7 +4514,7 @@ ClpSimplexOther::computeRhsEtc(parametricsData &paramData)
     largestChange = CoinMax(largestChange, CoinAbs(chgLower));
     FloatT chgUpper = upperChange[iColumn];
     largestChange = CoinMax(largestChange, CoinAbs(chgUpper));
-    if (lower > -1.0e30 && upper < 1.0e30) {
+    if (lower > -OneE30 && upper < OneE30) {
       if (lower + maxTheta * chgLower > upper + maxTheta * chgUpper) {
         maxTheta = (upper - lower) / (chgLower - chgUpper);
       }
@@ -4782,7 +4782,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
       FloatT alpha = array[iRow];
       FloatT thetaCoefficientLower = lowerChange[iSequence] + alpha;
       FloatT thetaCoefficientUpper = upperChange[iSequence] + alpha;
-      if (thetaCoefficientLower > 1.0e-8 && lower_[iSequence] > -1.0e30) {
+      if (thetaCoefficientLower > 1.0e-8 && lower_[iSequence] > -OneE30) {
         FloatT currentLower = lower_[iSequence];
         ClpTraceDebug(currentSolution >= currentLower - 100.0 * primalTolerance_);
         FloatT gap = currentSolution - currentLower;
@@ -4792,7 +4792,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
         //} else {
         //lowerCoefficient[iRow]=0.0;
       }
-      if (thetaCoefficientUpper < -1.0e-8 && upper_[iSequence] < 1.0e30) {
+      if (thetaCoefficientUpper < -1.0e-8 && upper_[iSequence] < OneE30) {
         FloatT currentUpper = upper_[iSequence];
         ClpTraceDebug(currentSolution <= currentUpper + 100.0 * primalTolerance_);
         FloatT gap2 = -(currentSolution - currentUpper); //positive
@@ -4898,7 +4898,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
         FloatT thetaCoefficientUpper = upperChange[iSequence] + alpha;
         FloatT oldLower = lowerCoefficient[iPivot];
         FloatT oldUpper = upperCoefficient[iPivot];
-        if (thetaCoefficientLower > 1.0e-8 && lower_[iSequence] > -1.0e30) {
+        if (thetaCoefficientLower > 1.0e-8 && lower_[iSequence] > -OneE30) {
           FloatT currentLower = lower_[iSequence];
           ClpTraceDebug(currentSolution >= currentLower - 100.0 * primalTolerance_);
           FloatT gap = currentSolution - currentLower;
@@ -4910,7 +4910,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
           if (oldLower)
             lowerCoefficient[iPivot] = COIN_DBL_MIN;
         }
-        if (thetaCoefficientUpper < -1.0e-8 && upper_[iSequence] < 1.0e30) {
+        if (thetaCoefficientUpper < -1.0e-8 && upper_[iSequence] < OneE30) {
           FloatT currentUpper = upper_[iSequence];
           ClpTraceDebug(currentSolution <= currentUpper + 100.0 * primalTolerance_);
           FloatT gap2 = -(currentSolution - currentUpper); //positive
@@ -5048,7 +5048,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
       int iSequence = pivotVariable_[iRow];
       FloatT alpha = array[iRow];
       FloatT thetaCoefficient = lowerChange[iSequence] + alpha;
-      if (thetaCoefficient > 1.0e-8&&lower_[iSequence]>-1.0e30) {
+      if (thetaCoefficient > 1.0e-8&&lower_[iSequence]>-OneE30) {
 	assert(CoinAbs(checkArray[iRow]-thetaCoefficient)<1.0e-5);
 	if(CoinAbs(checkArray[iRow]-thetaCoefficient)>1.0e-5) {
 	  abort();
@@ -5073,7 +5073,7 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
       int iSequence = pivotVariable_[iRow];
       FloatT alpha = array[iRow];
       FloatT thetaCoefficient = -(upperChange[iSequence] + alpha);
-      if (thetaCoefficient > 1.0e-8&&upper_[iSequence]<1.0e30) {
+      if (thetaCoefficient > 1.0e-8&&upper_[iSequence]<OneE30) {
 	assert(CoinAbs(checkArray[iRow]-thetaCoefficient)<1.0e-5);
 	if(CoinAbs(checkArray[iRow]-thetaCoefficient)>1.0e-5) {
 	  abort();
@@ -5220,9 +5220,9 @@ int ClpSimplexOther::nextTheta(int /*type*/, FloatT maxTheta, parametricsData &p
       FloatT currentSolution = solution_[iSequence] - theta_ * alpha;
       solution_[iSequence] = currentSolution;
 #ifdef CLP_PARAMETRIC_DENSE_ARRAYS
-      if (lower_[iSequence] > -1.0e30)
+      if (lower_[iSequence] > -OneE30)
         lowerGap[iPivot] = currentSolution - lower_[iSequence];
-      if (upper_[iSequence] < 1.0e30)
+      if (upper_[iSequence] < OneE30)
         upperGap[iPivot] = -(currentSolution - upper_[iSequence]);
 #endif
     }
@@ -5280,14 +5280,14 @@ void ClpSimplexOther::originalBound(int iSequence, FloatT theta,
       rowLowerWork_[iRow] = rowLower_[iRow] + theta * lowerChange[iSequence];
       rowUpperWork_[iRow] = rowUpper_[iRow] + theta * upperChange[iSequence];
       if (rowScale_) {
-        if (rowLowerWork_[iRow] > -1.0e50)
+        if (rowLowerWork_[iRow] > -OneE50)
           rowLowerWork_[iRow] *= rowScale_[iRow] * rhsScale_;
-        if (rowUpperWork_[iRow] < 1.0e50)
+        if (rowUpperWork_[iRow] < OneE50)
           rowUpperWork_[iRow] *= rowScale_[iRow] * rhsScale_;
       } else if (rhsScale_ != 1.0) {
-        if (rowLowerWork_[iRow] > -1.0e50)
+        if (rowLowerWork_[iRow] > -OneE50)
           rowLowerWork_[iRow] *= rhsScale_;
-        if (rowUpperWork_[iRow] < 1.0e50)
+        if (rowUpperWork_[iRow] < OneE50)
           rowUpperWork_[iRow] *= rhsScale_;
       }
     } else {
@@ -5296,14 +5296,14 @@ void ClpSimplexOther::originalBound(int iSequence, FloatT theta,
       columnUpperWork_[iSequence] = columnUpper_[iSequence] + theta * upperChange[iSequence];
       if (rowScale_) {
         FloatT multiplier = 1.0 * inverseColumnScale_[iSequence];
-        if (columnLowerWork_[iSequence] > -1.0e50)
+        if (columnLowerWork_[iSequence] > -OneE50)
           columnLowerWork_[iSequence] *= multiplier * rhsScale_;
-        if (columnUpperWork_[iSequence] < 1.0e50)
+        if (columnUpperWork_[iSequence] < OneE50)
           columnUpperWork_[iSequence] *= multiplier * rhsScale_;
       } else if (rhsScale_ != 1.0) {
-        if (columnLowerWork_[iSequence] > -1.0e50)
+        if (columnLowerWork_[iSequence] > -OneE50)
           columnLowerWork_[iSequence] *= rhsScale_;
-        if (columnUpperWork_[iSequence] < 1.0e50)
+        if (columnUpperWork_[iSequence] < OneE50)
           columnUpperWork_[iSequence] *= rhsScale_;
       }
     }
@@ -5964,7 +5964,7 @@ ClpSimplexOther::gubVersion(int *whichRows, int *whichColumns,
       scaleArray[i] = 1.0;
       if (rowIsGub[i] == -1) {
         FloatT largest = 1.0e-30;
-        FloatT smallest = 1.0e30;
+        FloatT smallest = OneE30;
         for (CoinBigIndex j = rowStart[i]; j < rowStart[i] + rowLength[i]; j++) {
           int iColumn = column[j];
           if (columnIsGub[iColumn] != -2) {
@@ -5975,9 +5975,9 @@ ClpSimplexOther::gubVersion(int *whichRows, int *whichColumns,
         }
         FloatT scale = CoinMax(0.001, 1.0 / sqrt(largest * smallest));
         scaleArray[i] = scale;
-        if (lower[i] > -1.0e30)
+        if (lower[i] > -OneE30)
           lower[i] *= scale;
-        if (upper[i] < 1.0e30)
+        if (upper[i] < OneE30)
           upper[i] *= scale;
       }
     }
@@ -6124,7 +6124,7 @@ ClpSimplexOther::gubVersion(int *whichRows, int *whichColumns,
       assert(lowerValue < upper[iSet] + 1.0e-6);
       FloatT gap = CoinMax(0.0, upper[iSet] - lowerValue);
       for (int i = gubStart[iSet]; i < gubStart[iSet + 1]; i++) {
-        if (upperColumn2[i] < 1.0e30) {
+        if (upperColumn2[i] < OneE30) {
           upperColumn2[i] = CoinMin(upperColumn2[i],
             lowerColumn2[i] + gap);
         }
@@ -7449,7 +7449,7 @@ int ClpSimplex::pivotResultPart2(int algorithm, int state)
       pivotRow_,
       alpha_);
     // If looks like bad pivot - refactorize
-    if (CoinAbs(dualOut_) > 1.0e50)
+    if (CoinAbs(dualOut_) > OneE50)
       updateStatus = 2;
     // if no pivots, bad update but reasonable alpha - take and invert
     if (updateStatus == 2 && !factorization_->pivots() && CoinAbs(alpha_) > 1.0e-5)
@@ -7909,27 +7909,27 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
               /* we always keep this and delete last 
 	       later maybe keep better formed one */
               rlo2 = CoinMax(rlo1, rlo2);
-              if (rlo2 < -1.0e30)
+              if (rlo2 < -OneE30)
                 rlo2 = -COIN_DBL_MAX;
               rup2 = CoinMin(rup1, rup2);
-              if (rup2 > 1.0e30)
+              if (rup2 > OneE30)
                 rup2 = COIN_DBL_MAX;
             } else {
               /* keep better formed one */
               if (rlo2 >= rlo1 - 1.0e-8 && rup2 <= rup1 + 1.0e-8) {
                 // ok
                 rlo2 = CoinMax(rlo1, rlo2);
-                if (rlo2 < -1.0e30)
+                if (rlo2 < -OneE30)
                   rlo2 = -COIN_DBL_MAX;
                 rup2 = CoinMin(rup1, rup2);
-                if (rup2 > 1.0e30)
+                if (rup2 > OneE30)
                   rup2 = COIN_DBL_MAX;
               } else if (rlo1 >= rlo2 - 1.0e-8 && rup1 <= rup2 + 1.0e-8) {
                 rlo2 = CoinMax(rlo1, rlo2);
-                if (rlo2 < -1.0e30)
+                if (rlo2 < -OneE30)
                   rlo2 = -COIN_DBL_MAX;
                 rup2 = CoinMin(rup1, rup2);
-                if (rup2 > 1.0e30)
+                if (rup2 > OneE30)
                   rup2 = COIN_DBL_MAX;
                 // swap
                 int temp = iLast;
@@ -7977,7 +7977,7 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
             if (cleanUp > 0.0) {
               /* see if close to multiple
 	       always allow integer values */
-              if (rlo2 > -1.0e30) {
+              if (rlo2 > -OneE30) {
                 FloatT value = rlo2;
                 FloatT value2 = floor(value + 0.5);
                 if (CoinAbs(value - value2) < 1.0e-9) {
@@ -7989,7 +7989,7 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
                     rlo2 = value2 * cleanUp;
                 }
               }
-              if (rup2 < 1.0e30) {
+              if (rup2 < OneE30) {
                 FloatT value = rup2;
                 FloatT value2 = floor(value + 0.5);
                 if (CoinAbs(value - value2) < 1.0e-9) {
@@ -8669,8 +8669,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
       if (rowType[iRow] > 0) {
         clpPresolveInfo1_4_8 thisInfo;
         thisInfo.row = iRow;
-        thisInfo.oldRowLower = (rowLower_[iRow] > -1.0e30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
-        thisInfo.oldRowUpper = (rowUpper_[iRow] < 1.0e30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
+        thisInfo.oldRowLower = (rowLower_[iRow] > -OneE30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
+        thisInfo.oldRowUpper = (rowUpper_[iRow] < OneE30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
         int n = rowLength[iRow];
         CoinBigIndex start = rowStart[iRow];
         thisInfo.lengthRow = n;
@@ -8790,8 +8790,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
             }
             rowType[iRow] = 1;
             clpPresolveInfo1_4_8 thisInfo;
-            thisInfo.oldRowLower = (rowLower_[iRow] > -1.0e30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
-            thisInfo.oldRowUpper = (rowUpper_[iRow] < 1.0e30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
+            thisInfo.oldRowLower = (rowLower_[iRow] > -OneE30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
+            thisInfo.oldRowUpper = (rowUpper_[iRow] < OneE30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
             thisInfo.row = iRow;
             int n = rowLength[iRow];
             CoinBigIndex start = rowStart[iRow];
@@ -8841,11 +8841,11 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
           FloatT rhs = rowLower[iRow] / value1;
           FloatT multiplier = value2 / value1;
           if (multiplier > 0.0) {
-            newLower = (dropUpper < 1.0e30) ? rhs - multiplier * dropUpper : -COIN_DBL_MAX;
-            newUpper = (dropLower > -1.0e30) ? rhs - multiplier * dropLower : COIN_DBL_MAX;
+            newLower = (dropUpper < OneE30) ? rhs - multiplier * dropUpper : -COIN_DBL_MAX;
+            newUpper = (dropLower > -OneE30) ? rhs - multiplier * dropLower : COIN_DBL_MAX;
           } else {
-            newUpper = (dropUpper < 1.0e30) ? rhs - multiplier * dropUpper : COIN_DBL_MAX;
-            newLower = (dropLower > -1.0e30) ? rhs - multiplier * dropLower : -COIN_DBL_MAX;
+            newUpper = (dropUpper < OneE30) ? rhs - multiplier * dropUpper : COIN_DBL_MAX;
+            newLower = (dropLower > -OneE30) ? rhs - multiplier * dropLower : -COIN_DBL_MAX;
           }
           //columnType[iColumn1]=3;
           columnType[iColumn2] = 14;
@@ -8943,9 +8943,9 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
               FloatT value = array[jRow];
               FloatT valueNew = value - multiplier * element[i];
               FloatT rhsMod = rhs * element[i];
-              if (rowLower[jRow] > -1.0e30)
+              if (rowLower[jRow] > -OneE30)
                 rowLower[jRow] -= rhsMod;
-              if (rowUpper[jRow] < 1.0e30)
+              if (rowUpper[jRow] < OneE30)
                 rowUpper[jRow] -= rhsMod;
               if (!value) {
                 array[jRow] = valueNew;
@@ -9042,8 +9042,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
 #endif
         rowType[iRow] = 1;
         clpPresolveInfo1_4_8 thisInfo;
-        thisInfo.oldRowLower = (rowLower_[iRow] > -1.0e30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
-        thisInfo.oldRowUpper = (rowUpper_[iRow] < 1.0e30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
+        thisInfo.oldRowLower = (rowLower_[iRow] > -OneE30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
+        thisInfo.oldRowUpper = (rowUpper_[iRow] < OneE30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
         thisInfo.row = iRow;
         int n = rowLength[iRow];
         CoinBigIndex start = rowStart[iRow];
@@ -9156,14 +9156,14 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
             FloatT lower = newLower;
             FloatT upper = newUpper;
             if (value > 0.0) {
-              if (rowUpper[iRow] < 1.0e30)
+              if (rowUpper[iRow] < OneE30)
                 upper = rowUpper[iRow] / value;
-              if (rowLower[iRow] > -1.0e30)
+              if (rowLower[iRow] > -OneE30)
                 lower = rowLower[iRow] / value;
             } else {
-              if (rowUpper[iRow] < 1.0e30)
+              if (rowUpper[iRow] < OneE30)
                 lower = rowUpper[iRow] / value;
-              if (rowLower[iRow] > -1.0e30)
+              if (rowLower[iRow] > -OneE30)
                 upper = rowLower[iRow] / value;
             }
             if (lower > newLower + primalTolerance_) {
@@ -9203,8 +9203,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
         if (jRowLower >= 0 || jRowUpper >= 0) {
           clpPresolveInfo2 thisInfo;
           if (jRowLower >= 0) {
-            thisInfo.oldRowLower = (rowLower_[jRowLower] > -1.0e30) ? rowLower_[jRowLower] - rowLower[jRowLower] : rowLower[jRowLower];
-            thisInfo.oldRowUpper = (rowUpper_[jRowLower] < 1.0e30) ? rowUpper_[jRowLower] - rowUpper[jRowLower] : rowUpper[jRowLower];
+            thisInfo.oldRowLower = (rowLower_[jRowLower] > -OneE30) ? rowLower_[jRowLower] - rowLower[jRowLower] : rowLower[jRowLower];
+            thisInfo.oldRowUpper = (rowUpper_[jRowLower] < OneE30) ? rowUpper_[jRowLower] - rowUpper[jRowLower] : rowUpper[jRowLower];
             thisInfo.row = jRowLower;
             thisInfo.coefficient = coefficientLower;
           } else {
@@ -9216,8 +9216,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
 #endif
           }
           if (jRowUpper >= 0 && jRowLower != jRowUpper) {
-            thisInfo.oldRowLower2 = (rowLower_[jRowUpper] > -1.0e30) ? rowLower_[jRowUpper] - rowLower[jRowUpper] : rowLower[jRowUpper];
-            thisInfo.oldRowUpper2 = (rowUpper_[jRowUpper] < 1.0e30) ? rowUpper_[jRowUpper] - rowUpper[jRowUpper] : rowUpper[jRowUpper];
+            thisInfo.oldRowLower2 = (rowLower_[jRowUpper] > -OneE30) ? rowLower_[jRowUpper] - rowLower[jRowUpper] : rowLower[jRowUpper];
+            thisInfo.oldRowUpper2 = (rowUpper_[jRowUpper] < OneE30) ? rowUpper_[jRowUpper] - rowUpper[jRowUpper] : rowUpper[jRowUpper];
             thisInfo.row2 = jRowUpper;
             thisInfo.coefficient2 = coefficientUpper;
           } else {
@@ -9257,8 +9257,8 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
               // mark as redundant
               infoA[nActions].infoOffset = static_cast< int >(stuff.putStuff - startStuff);
               clpPresolveInfo1_4_8 thisInfo;
-              thisInfo.oldRowLower = (rowLower_[iRow] > -1.0e30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
-              thisInfo.oldRowUpper = (rowUpper_[iRow] < 1.0e30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
+              thisInfo.oldRowLower = (rowLower_[iRow] > -OneE30) ? rowLower_[iRow] - rowLower[iRow] : rowLower[iRow];
+              thisInfo.oldRowUpper = (rowUpper_[iRow] < OneE30) ? rowUpper_[iRow] - rowUpper[iRow] : rowUpper[iRow];
               thisInfo.row = iRow;
               int n = rowLength[iRow];
               CoinBigIndex start = rowStart[iRow];
@@ -9914,11 +9914,11 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
             eventHandler_->eventWithInfo(ClpEventHandler::modifyMatrixInMiniPostsolve, &thisInfo);
           } else {
 #endif
-            if (rowLower_[iRow] > -1.0e30)
+            if (rowLower_[iRow] > -OneE30)
               rowLowerX[iRow] = rowLower_[iRow] - thisInfo.oldRowLower;
             else
               rowLowerX[iRow] = thisInfo.oldRowLower;
-            if (rowUpper_[iRow] < 1.0e30)
+            if (rowUpper_[iRow] < OneE30)
               rowUpperX[iRow] = rowUpper_[iRow] - thisInfo.oldRowUpper;
             else
               rowUpperX[iRow] = thisInfo.oldRowUpper;
@@ -9978,11 +9978,11 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
           FloatT valueUpper = thisInfo.coefficient2;
           if (jRowLower >= 0) {
             rowType[jRowLower] = 0;
-            if (rowLower_[jRowLower] > -1.0e30)
+            if (rowLower_[jRowLower] > -OneE30)
               rowLowerX[jRowLower] = rowLower_[jRowLower] - thisInfo.oldRowLower;
             else
               rowLowerX[jRowLower] = thisInfo.oldRowLower;
-            if (rowUpper_[jRowLower] < 1.0e30)
+            if (rowUpper_[jRowLower] < OneE30)
               rowUpperX[jRowLower] = rowUpper_[jRowLower] - thisInfo.oldRowUpper;
             else
               rowUpperX[jRowLower] = thisInfo.oldRowUpper;
@@ -9996,11 +9996,11 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
           }
           if (jRowUpper >= 0) {
             rowType[jRowUpper] = 0;
-            if (rowLower_[jRowUpper] > -1.0e30)
+            if (rowLower_[jRowUpper] > -OneE30)
               rowLowerX[jRowUpper] = rowLower_[jRowUpper] - thisInfo.oldRowLower2;
             else
               rowLowerX[jRowUpper] = thisInfo.oldRowLower2;
-            if (rowUpper_[jRowUpper] < 1.0e30)
+            if (rowUpper_[jRowUpper] < OneE30)
               rowUpperX[jRowUpper] = rowUpper_[jRowUpper] - thisInfo.oldRowUpper2;
             else
               rowUpperX[jRowUpper] = thisInfo.oldRowUpper2;
@@ -10109,9 +10109,9 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
               int jRow = rowX[j];
               FloatT value = elementX[j] * solValue;
               rowActivity_[jRow] += value;
-              if (rowLowerX[jRow] > -1.0e30)
+              if (rowLowerX[jRow] > -OneE30)
                 rowLowerX[jRow] += value;
-              if (rowUpperX[jRow] < 1.0e30)
+              if (rowUpperX[jRow] < OneE30)
                 rowUpperX[jRow] += value;
             }
           }
@@ -10256,9 +10256,9 @@ int ClpSimplex::outDuplicateRows(int numberLook, int *whichRows, bool noOverlaps
             FloatT value = array[jRow];
             FloatT valueNew = value + multiplier * tempElement[i];
             FloatT rhsMod = multiplier1 * tempElement[i];
-            if (rowLowerX[jRow] > -1.0e30)
+            if (rowLowerX[jRow] > -OneE30)
               rowLowerX[jRow] += rhsMod;
-            if (rowUpperX[jRow] < 1.0e30)
+            if (rowUpperX[jRow] < OneE30)
               rowUpperX[jRow] += rhsMod;
             rowActivity_[jRow] += rhsMod;
             if (!value) {

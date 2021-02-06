@@ -1028,8 +1028,8 @@ void ClpPackedMatrix::transposeTimesByColumn(const ClpSimplex *model, FloatT sca
             FloatT dualT = -model->currentDualTolerance();
             FloatT acceptablePivot = model->spareDoubleArray_[0];
             // We can also see if infeasible or pivoting on free
-            FloatT tentativeTheta = 1.0e15;
-            FloatT upperTheta = 1.0e31;
+            FloatT tentativeTheta = OneE15;
+            FloatT upperTheta = OneE31;
             int addSequence = model->numberColumns();
             const unsigned char *COIN_RESTRICT statusArray = model->statusArray() + addSequence;
             int numberRemaining = 0;
@@ -1732,7 +1732,7 @@ transposeTimesUnscaledBit2(clpTempInfo &info)
   FloatT dualTolerance = info.dualTolerance;
   FloatT acceptablePivot = info.acceptablePivot;
   const FloatT *COIN_RESTRICT pi = info.work;
-  FloatT tentativeTheta = 1.0e15;
+  FloatT tentativeTheta = OneE15;
   int numberRemaining = 0;
   FloatT upperTheta = info.upperTheta;
   int first = info.startColumn;
@@ -1850,7 +1850,7 @@ int ClpPackedMatrix::gutsOfTransposeTimesUnscaled(const FloatT *COIN_RESTRICT pi
     moveAndZero(info, 2, NULL);
   } else {
 #endif
-    FloatT tentativeTheta = 1.0e15;
+    FloatT tentativeTheta = OneE15;
     FloatT multiplier[] = { -1.0, 1.0 };
     FloatT dualT = -dualTolerance;
     for (int iColumn = 0; iColumn < numberActiveColumns_; iColumn++) {
@@ -3500,7 +3500,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
      assert (model->scalingFlag() <= 4);
      //  scale_stats[model->scalingFlag()]++;
      FloatT largest = 0.0;
-     FloatT smallest = 1.0e50;
+     FloatT smallest = OneE50;
      // get matrix data pointers
      int * row = matrix_->getMutableIndices();
      const CoinBigIndex * columnStart = matrix_->getVectorStarts();
@@ -3600,7 +3600,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
           const CoinBigIndex * rowStart = rowCopy->getVectorStarts();
           const FloatT * element = rowCopy->getElements();
           // need to scale
-          if (largest > 1.0e13 * smallest) {
+          if (largest > OneE13 * smallest) {
                // safer to have smaller zero tolerance
                FloatT ratio = smallest / largest;
                ClpSimplex * simplex = static_cast<ClpSimplex *> (model);
@@ -3665,7 +3665,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                                              if (usefulColumn[iColumn]) {
                                                   FloatT value = CoinAbs(element[j] * columnScale[iColumn]);
                                                   largest = CoinMax(largest, value);
-                                                  assert (largest < 1.0e40);
+                                                  assert (largest < OneE40);
                                              }
                                         }
                                         rowScale[iRow] = 1.0 / largest;
@@ -3679,13 +3679,13 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                               }
                          } else {
                               overallLargest = 0.0;
-                              overallSmallest = 1.0e50;
+                              overallSmallest = OneE50;
                               // Geometric mean on row scales
                               for (iRow = 0; iRow < numberRows; iRow++) {
                                    if (usefulRow[iRow]) {
                                         CoinBigIndex j;
                                         largest = 1.0e-20;
-                                        smallest = 1.0e50;
+                                        smallest = OneE50;
                                         for (j = rowStart[iRow]; j < rowStart[iRow+1]; j++) {
                                              int iColumn = column[j];
                                              if (usefulColumn[iColumn]) {
@@ -3697,7 +3697,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                                         }
                                         if (iRow >= numberRows2) {
                                              rowScale[iRow] = 1.0 / sqrt(smallest * largest);
-                                             //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(1.0e10,rowScale[iRow]));
+                                             //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(OneE10, rowScale[iRow]));
                                         }
 #ifdef COIN_DEVELOP
                                         if (extraDetails) {
@@ -3724,7 +3724,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                                    if (usefulColumn[iColumn]) {
                                         FloatT value = CoinAbs(element[j]);
                                         largest = CoinMax(largest, value);
-                                        assert (largest < 1.0e40);
+                                        assert (largest < OneE40);
                                    }
                               }
                               rowScale[iRow] = 1.0 / largest;
@@ -3745,14 +3745,14 @@ ClpPackedMatrix::scale2(ClpModel * model) const
 #endif
                     while (numberPass) {
                          overallLargest = 0.0;
-                         overallSmallest = 1.0e50;
+                         overallSmallest = OneE50;
                          numberPass--;
                          // Geometric mean on row scales
                          for (iRow = 0; iRow < numberRows; iRow++) {
                               if (usefulRow[iRow]) {
                                    CoinBigIndex j;
                                    largest = 1.0e-20;
-                                   smallest = 1.0e50;
+                                   smallest = OneE50;
                                    for (j = rowStart[iRow]; j < rowStart[iRow+1]; j++) {
                                         int iColumn = column[j];
                                         if (usefulColumn[iColumn]) {
@@ -3764,7 +3764,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                                    }
 
                                    rowScale[iRow] = 1.0 / sqrt(smallest * largest);
-                                   //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(1.0e10,rowScale[iRow]));
+                                   //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(OneE10, rowScale[iRow]));
                                    if (extraDetails) {
                                         overallLargest = CoinMax(largest * rowScale[iRow], overallLargest);
                                         overallSmallest = CoinMin(smallest * rowScale[iRow], overallSmallest);
@@ -3773,7 +3773,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                          }
 #ifdef USE_OBJECTIVE
                          largest = 1.0e-20;
-                         smallest = 1.0e50;
+                         smallest = OneE50;
                          for (iColumn = 0; iColumn < numberColumns; iColumn++) {
                               if (usefulColumn[iColumn]) {
                                    FloatT value = CoinAbs(objective[iColumn]);
@@ -3796,7 +3796,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                               if (usefulColumn[iColumn]) {
                                    CoinBigIndex j;
                                    largest = 1.0e-20;
-                                   smallest = 1.0e50;
+                                   smallest = OneE50;
                                    for (j = columnStart[iColumn];
                                              j < columnStart[iColumn] + columnLength[iColumn]; j++) {
                                         iRow = row[j];
@@ -3815,7 +3815,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                                    }
 #endif
                                    columnScale[iColumn] = 1.0 / sqrt(smallest * largest);
-                                   //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(1.0e10,columnScale[iColumn]));
+                                   //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(OneE10, columnScale[iColumn]));
                               }
                          }
                     }
@@ -3832,7 +3832,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                          if (scaledDifference > tolerance && scaledDifference < 1.0e-4) {
                               // make gap larger
                               rowScale[iRow] *= 1.0e-4 / scaledDifference;
-                              rowScale[iRow] = CoinMax(1.0e-10, CoinMin(1.0e10, rowScale[iRow]));
+                              rowScale[iRow] = CoinMax(1.0e-10, CoinMin(OneE10, rowScale[iRow]));
                               //printf("Row %d difference %g scaled diff %g => %g\n",iRow,difference,
                               // scaledDifference,difference*rowScale[iRow]);
                          }
@@ -3840,12 +3840,12 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                }
                // final pass to scale columns so largest is reasonable
                // See what smallest will be if largest is 1.0
-               overallSmallest = 1.0e50;
+               overallSmallest = OneE50;
                for (iColumn = 0; iColumn < numberColumns; iColumn++) {
                     if (usefulColumn[iColumn]) {
                          CoinBigIndex j;
                          largest = 1.0e-20;
-                         smallest = 1.0e50;
+                         smallest = OneE50;
                          for (j = columnStart[iColumn];
                                    j < columnStart[iColumn] + columnLength[iColumn]; j++) {
                               iRow = row[j];
@@ -3907,7 +3907,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
           if (overallSmallest < 1.0e-1)
                overallLargest = 1.0 / sqrt(overallSmallest);
           overallLargest = CoinMin(100.0, overallLargest);
-          overallSmallest = 1.0e50;
+          overallSmallest = OneE50;
           //printf("scaling %d\n",model->scalingFlag());
           for (iColumn = 0; iColumn < numberColumns; iColumn++) {
                if (columnUpper[iColumn] >
@@ -3915,7 +3915,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                     //if (usefulColumn[iColumn]) {
                     CoinBigIndex j;
                     largest = 1.0e-20;
-                    smallest = 1.0e50;
+                    smallest = OneE50;
                     for (j = columnStart[iColumn];
                               j < columnStart[iColumn] + columnLength[iColumn]; j++) {
                          iRow = row[j];
@@ -3926,7 +3926,7 @@ ClpPackedMatrix::scale2(ClpModel * model) const
                          }
                     }
                     columnScale[iColumn] = overallLargest / largest;
-                    //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(1.0e10,columnScale[iColumn]));
+                    //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(OneE10, columnScale[iColumn]));
 #ifdef RANDOMIZE
                     FloatT value = 0.5 - randomNumberGenerator_.randomDouble(); //between -0.5 to + 0.5
                     columnScale[iColumn] *= (1.0 + 0.1 * value);
@@ -4188,7 +4188,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
   assert(model->scalingFlag() <= 5);
   //  scale_stats[model->scalingFlag()]++;
   FloatT largest = 0.0;
-  FloatT smallest = 1.0e50;
+  FloatT smallest = OneE50;
   // get matrix data pointers
   int *COIN_RESTRICT row = matrix_->getMutableIndices();
   const CoinBigIndex *COIN_RESTRICT columnStart = matrix_->getVectorStarts();
@@ -4257,7 +4257,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
   model->messageHandler()->message(CLP_PACKEDSCALE_INITIAL, *model->messagesPointer())
     << smallest << largest
     << CoinMessageEol;
-  if (smallest * 1.0e12 < largest && simplex) {
+  if (smallest * OneE12 < largest && simplex) {
     // increase tolerances
     simplex->setCurrentDualTolerance(CoinMax(simplex->currentDualTolerance(), 5.0e-7));
     simplex->setCurrentPrimalTolerance(CoinMax(simplex->currentPrimalTolerance(), 5.0e-7));
@@ -4299,7 +4299,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
     const CoinBigIndex *COIN_RESTRICT rowStart = rowCopy->getVectorStarts();
     const FloatT *COIN_RESTRICT element = rowCopy->getElements();
     // need to scale
-    if (largest > 1.0e13 * smallest) {
+    if (largest > OneE13 * smallest) {
       // safer to have smaller zero tolerance
       FloatT ratio = smallest / largest;
       ClpSimplex *simplex = static_cast< ClpSimplex * >(model);
@@ -4347,7 +4347,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
             if (usefulColumn[iColumn]) {
               FloatT value = CoinAbs(element[j]);
               largest = CoinMax(largest, value);
-              assert(largest < 1.0e40);
+              assert(largest < OneE40);
             }
           }
           rowScale[iRow] = 1.0 / largest;
@@ -4367,13 +4367,13 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
 #endif
         while (numberPass) {
           overallLargest = 0.0;
-          overallSmallest = 1.0e50;
+          overallSmallest = OneE50;
           numberPass--;
           // Geometric mean on row scales
           for (iRow = 0; iRow < numberRows; iRow++) {
             CoinBigIndex j;
             largest = 1.0e-50;
-            smallest = 1.0e50;
+            smallest = OneE50;
             for (j = rowStart[iRow]; j < rowStart[iRow + 1]; j++) {
               int iColumn = column[j];
               if (usefulColumn[iColumn]) {
@@ -4389,7 +4389,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
 #else
             rowScale[iRow] = 1.0 / sqrt(smallest * largest);
 #endif
-            //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(1.0e10,rowScale[iRow]));
+            //rowScale[iRow]=CoinMax(1.0e-10,CoinMin(OneE10, rowScale[iRow]));
             if (extraDetails) {
               overallLargest = CoinMax(largest * rowScale[iRow], overallLargest);
               overallSmallest = CoinMin(smallest * rowScale[iRow], overallSmallest);
@@ -4402,7 +4402,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
 #endif
 #ifdef USE_OBJECTIVE
           largest = 1.0e-20;
-          smallest = 1.0e50;
+          smallest = OneE50;
           for (iColumn = 0; iColumn < numberColumns; iColumn++) {
             if (usefulColumn[iColumn]) {
               FloatT value = CoinAbs(objective[iColumn]);
@@ -4425,7 +4425,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
             if (usefulColumn[iColumn]) {
               CoinBigIndex j;
               largest = 1.0e-50;
-              smallest = 1.0e50;
+              smallest = OneE50;
               for (j = columnStart[iColumn];
                    j < columnStart[iColumn] + columnLength[iColumn]; j++) {
                 iRow = row[j];
@@ -4446,7 +4446,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
 #else
               columnScale[iColumn] = 1.0 / sqrt(smallest * largest);
 #endif
-              //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(1.0e10,columnScale[iColumn]));
+              //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(OneE10, columnScale[iColumn]));
             }
           }
 #ifdef SQRT_ARRAY
@@ -4465,7 +4465,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
         if (scaledDifference > tolerance && scaledDifference < 1.0e-4) {
           // make gap larger
           rowScale[iRow] *= 1.0e-4 / scaledDifference;
-          rowScale[iRow] = CoinMax(1.0e-10, CoinMin(1.0e10, rowScale[iRow]));
+          rowScale[iRow] = CoinMax(1.0e-10, CoinMin(OneE10, rowScale[iRow]));
           //printf("Row %d difference %g scaled diff %g => %g\n",iRow,difference,
           // scaledDifference,difference*rowScale[iRow]);
         }
@@ -4473,12 +4473,12 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
       // final pass to scale columns so largest is reasonable
       // See what smallest will be if largest is 1.0
       if (model->scalingFlag() != 5) {
-        overallSmallest = 1.0e50;
+        overallSmallest = OneE50;
         for (iColumn = 0; iColumn < numberColumns; iColumn++) {
           if (usefulColumn[iColumn]) {
             CoinBigIndex j;
             largest = 1.0e-20;
-            smallest = 1.0e50;
+            smallest = OneE50;
             for (j = columnStart[iColumn];
                  j < columnStart[iColumn] + columnLength[iColumn]; j++) {
               iRow = row[j];
@@ -4539,7 +4539,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
     if (overallSmallest < 1.0e-1)
       overallLargest = 1.0 / sqrt(overallSmallest);
     overallLargest = CoinMin(100.0, overallLargest);
-    overallSmallest = 1.0e50;
+    overallSmallest = OneE50;
     char *usedRow = reinterpret_cast< char * >(inverseRowScale);
     memset(usedRow, 0, numberRows);
     //printf("scaling %d\n",model->scalingFlag());
@@ -4549,7 +4549,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
           //if (usefulColumn[iColumn]) {
           CoinBigIndex j;
           largest = 1.0e-20;
-          smallest = 1.0e50;
+          smallest = OneE50;
           for (j = columnStart[iColumn];
                j < columnStart[iColumn] + columnLength[iColumn]; j++) {
             iRow = row[j];
@@ -4559,7 +4559,7 @@ int ClpPackedMatrix::scale(ClpModel *model, ClpSimplex *simplex) const
             smallest = CoinMin(smallest, value);
           }
           columnScale[iColumn] = overallLargest / largest;
-          //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(1.0e10,columnScale[iColumn]));
+          //columnScale[iColumn]=CoinMax(1.0e-10,CoinMin(OneE10, columnScale[iColumn]));
 #ifdef RANDOMIZE
           FloatT value = 0.5 - randomNumberGenerator_.randomDouble(); //between -0.5 to + 0.5
           columnScale[iColumn] *= (1.0 + 0.1 * value);
@@ -6144,13 +6144,13 @@ static int dualColumn0(const ClpSimplex *model, FloatT *spare,
   // do dualColumn0
   int i;
   int numberRemaining = 0;
-  FloatT upperTheta = 1.0e31;
+  FloatT upperTheta = OneE31;
   FloatT freePivot = acceptablePivot;
   int posFree = -1;
   const FloatT *reducedCost = model->djRegion(1);
   FloatT dualTolerance = model->dualTolerance();
   // We can also see if infeasible or pivoting on free
-  FloatT tentativeTheta = 1.0e25;
+  FloatT tentativeTheta = OneE25;
   for (i = 0; i < numberIn; i++) {
     FloatT alpha = arrayTemp[i];
     int iSequence = indexTemp[i] + offset;
@@ -6407,7 +6407,7 @@ void ClpPackedMatrix2::transposeTimes(const ClpSimplex *model,
   // See if dualColumn0 coding wanted
   bool dualColumn = model->spareIntArray_[0] == 1;
   FloatT acceptablePivot = model->spareDoubleArray_[0];
-  FloatT upperTheta = 1.0e31;
+  FloatT upperTheta = OneE31;
   FloatT freePivot = acceptablePivot;
   int posFree = -1;
   int numberRemaining = 0;
@@ -6446,7 +6446,7 @@ void ClpPackedMatrix2::transposeTimes(const ClpSimplex *model,
     const FloatT *reducedCost = model->djRegion(0);
     FloatT dualTolerance = model->dualTolerance();
     // We can also see if infeasible or pivoting on free
-    FloatT tentativeTheta = 1.0e25;
+    FloatT tentativeTheta = OneE25;
     int addSequence = model->numberColumns();
     for (i = 0; i < numberInRowArray; i++) {
       int iRow = whichRow[i];
@@ -7679,8 +7679,8 @@ void ClpPackedMatrix3::transposeTimes(const ClpSimplex *model,
   FloatT multiplier[] = { -1.0, 1.0 };
   FloatT dualT = -model->currentDualTolerance();
   FloatT acceptablePivot = model->spareDoubleArray_[0];
-  FloatT tentativeTheta = 1.0e15;
-  FloatT upperTheta = 1.0e31;
+  FloatT tentativeTheta = OneE15;
+  FloatT upperTheta = OneE31;
   int numberRemaining = 0;
   // dualColumn0 for slacks
   for (int i = 0; i < numberInRowArray; i++) {
@@ -8705,7 +8705,7 @@ dualColumn00(clpTempInfo & info)
   FloatT acceptablePivot = info.acceptablePivot;
   FloatT dualTolerance = info.tolerance;
   int numberToDo=info.numberToDo;
-  FloatT tentativeTheta = 1.0e15;
+  FloatT tentativeTheta = OneE15;
   int numberRemaining = 0;
   FloatT multiplier[] = { -1.0, 1.0};
   FloatT dualT = - dualTolerance;
@@ -8749,8 +8749,8 @@ ClpSimplexDual::dualColumn0(const CoinIndexedVector * rowArray,
      const int * which;
      const FloatT * reducedCost;
      // We can also see if infeasible or pivoting on free
-     FloatT tentativeTheta = 1.0e15;
-     FloatT upperTheta = 1.0e31;
+     FloatT tentativeTheta = OneE15;
+     FloatT upperTheta = OneE31;
      FloatT freePivot = acceptablePivot;
      FloatT bestPossible = 0.0;
      int numberRemaining = 0;

@@ -265,7 +265,7 @@ const CoinPresolveAction *implied_free_action::presolve(
 
 // Can't go on without a suitable finite infinity, can we?
 #ifdef USE_SMALL_LARGE
-  const FloatT large = 1.0e10;
+  const FloatT large = OneE10
 #else
   const FloatT large = TOO_BIG_FLOAT;
 #endif
@@ -442,8 +442,8 @@ const CoinPresolveAction *implied_free_action::presolve(
               ++infUi;
           }
         }
-        const FloatT maxUinf = maxUi + infUi * 1.0e31;
-        const FloatT maxLinf = maxLi - infLi * 1.0e31;
+        const FloatT maxUinf = maxUi + infUi * OneE31;
+        const FloatT maxLinf = maxLi - infLi * OneE31;
         if (maxUinf <= rupi + feasTol && maxLinf >= rloi - feasTol) {
           infiniteUp[i] = -2;
         } else if (maxUinf < rloi - feasTol && !fixInfeasibility) {

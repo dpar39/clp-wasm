@@ -328,7 +328,7 @@ void CoinSimpFactorization::initialSomeNumbers()
   //EtaMaxCap_ in allocateSomeArrays
 
   // minIncrease_ in allocateSomeArrays
-  updateTol_ = 1.0e12;
+  updateTol_ = OneE12;
 
   doSuhlHeuristic_ = true;
   maxU_ = -1.0;

@@ -310,7 +310,7 @@ int ClpDualRowSteepest::pivotRow()
   start[0] = static_cast< int >(dstart);
   start[3] = start[0];
   //FloatT largestWeight=0.0;
-  //FloatT smallestWeight=1.0e100;
+  //FloatT smallestWeight=OneE100;
   for (iPass = 0; iPass < 2; iPass++) {
     int end = start[2 * iPass + 1];
     for (i = start[2 * iPass]; i < end; i++) {
@@ -325,7 +325,7 @@ int ClpDualRowSteepest::pivotRow()
             value *= 2.0;
         }
 #endif
-        FloatT weight = CoinMin(weights_[iRow], 1.0e50);
+        FloatT weight = CoinMin(weights_[iRow], OneE50);
         //largestWeight = CoinMax(largestWeight,weight);
         //smallestWeight = CoinMin(smallestWeight,weight);
         //FloatT dubious = dubiousWeights_[iRow];

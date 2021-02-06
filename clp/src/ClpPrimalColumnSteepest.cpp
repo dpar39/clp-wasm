@@ -700,7 +700,7 @@ int ClpPrimalColumnSteepest::pivotColumn(CoinIndexedVector *updates,
     }
   }
   //FloatT largestWeight=0.0;
-  //FloatT smallestWeight=1.0e100;
+  //FloatT smallestWeight=OneE100;
   model_->clpMatrix()->setSavedBestSequence(bestSequence);
   if (bestSequence >= 0)
     model_->clpMatrix()->setSavedBestDj(model_->djRegion()[bestSequence]);
@@ -3032,7 +3032,7 @@ int ClpPrimalColumnSteepest::pivotColumnOldMethod(CoinIndexedVector *updates,
   start[0] = static_cast< int >(dstart);
   start[3] = start[0];
   //FloatT largestWeight=0.0;
-  //FloatT smallestWeight=1.0e100;
+  //FloatT smallestWeight=OneE100;
   for (iPass = 0; iPass < 2; iPass++) {
     int end = start[2 * iPass + 1];
     if (switchType < 5) {
@@ -3897,9 +3897,9 @@ void ClpPrimalColumnSteepest::updateWeights(CoinIndexedVector *input)
   if (pivotRow >= 0) {
     // set outgoing weight here
     FloatT alpha = model_->alpha();
-    if (CoinAbs(alpha) > 1.0e15) {
+    if (CoinAbs(alpha) > OneE15) {
       COIN_DETAIL_PRINT(printf("alpha %g for %d !!\n", alpha, model_->sequenceOut()));
-      alpha = 1.0e15;
+      alpha = OneE15;
     }
     weights_[model_->sequenceOut()] = devex_ / (alpha * alpha);
   }

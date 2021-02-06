@@ -559,16 +559,16 @@ bool ClpInterior::createWorkingData()
   CoinMemcpyN(columnUpper_, numberColumns_, columnUpperWork_);
   // clean up any mismatches on infinity
   for (i = 0; i < numberColumns_; i++) {
-    if (columnLowerWork_[i] < -1.0e30)
+    if (columnLowerWork_[i] < -OneE30)
       columnLowerWork_[i] = -COIN_DBL_MAX;
-    if (columnUpperWork_[i] > 1.0e30)
+    if (columnUpperWork_[i] > OneE30)
       columnUpperWork_[i] = COIN_DBL_MAX;
   }
   // clean up any mismatches on infinity
   for (i = 0; i < numberRows_; i++) {
-    if (rowLowerWork_[i] < -1.0e30)
+    if (rowLowerWork_[i] < -OneE30)
       rowLowerWork_[i] = -COIN_DBL_MAX;
-    if (rowUpperWork_[i] > 1.0e30)
+    if (rowUpperWork_[i] > OneE30)
       rowUpperWork_[i] = COIN_DBL_MAX;
   }
   // check rim of problem okay
@@ -578,23 +578,23 @@ bool ClpInterior::createWorkingData()
     for (i = 0; i < numberColumns_; i++) {
       CoinWorkDouble multiplier = rhsScale_ / columnScale_[i];
       cost_[i] *= columnScale_[i];
-      if (columnLowerWork_[i] > -1.0e50)
+      if (columnLowerWork_[i] > -OneE50)
         columnLowerWork_[i] *= multiplier;
-      if (columnUpperWork_[i] < 1.0e50)
+      if (columnUpperWork_[i] < OneE50)
         columnUpperWork_[i] *= multiplier;
     }
     for (i = 0; i < numberRows_; i++) {
       CoinWorkDouble multiplier = rhsScale_ * rowScale_[i];
-      if (rowLowerWork_[i] > -1.0e50)
+      if (rowLowerWork_[i] > -OneE50)
         rowLowerWork_[i] *= multiplier;
-      if (rowUpperWork_[i] < 1.0e50)
+      if (rowUpperWork_[i] < OneE50)
         rowUpperWork_[i] *= multiplier;
     }
   } else if (rhsScale_ != 1.0) {
     for (i = 0; i < numberColumns_ + numberRows_; i++) {
-      if (lower_[i] > -1.0e50)
+      if (lower_[i] > -OneE50)
         lower_[i] *= rhsScale_;
-      if (upper_[i] < 1.0e50)
+      if (upper_[i] < OneE50)
         upper_[i] *= rhsScale_;
     }
   }
@@ -754,17 +754,17 @@ bool ClpInterior::sanityCheck()
   int i;
   numberBad = 0;
   firstBad = -1;
-  minimumGap = 1.0e100;
-  smallestBound = 1.0e100;
+  minimumGap = OneE100;
+  smallestBound = OneE100;
   largestBound = 0.0;
-  smallestObj = 1.0e100;
+  smallestObj = OneE100;
   largestObj = 0.0;
   // If bounds are too close - fix
   CoinWorkDouble fixTolerance = 1.1 * primalTolerance();
   for (i = numberColumns_; i < numberColumns_ + numberRows_; i++) {
     CoinWorkDouble value;
     value = CoinAbs(cost_[i]);
-    if (value > 1.0e50) {
+    if (value > OneE50) {
       numberBad++;
       if (firstBad < 0)
         firstBad = i;
@@ -789,14 +789,14 @@ bool ClpInterior::sanityCheck()
       if (value < minimumGap)
         minimumGap = value;
     }
-    if (lower_[i] > -1.0e100 && lower_[i]) {
+    if (lower_[i] > -OneE100 && lower_[i]) {
       value = CoinAbs(lower_[i]);
       if (value > largestBound)
         largestBound = value;
       if (value < smallestBound)
         smallestBound = value;
     }
-    if (upper_[i] < 1.0e100 && upper_[i]) {
+    if (upper_[i] < OneE100 && upper_[i]) {
       value = CoinAbs(upper_[i]);
       if (value > largestBound)
         largestBound = value;
@@ -810,13 +810,13 @@ bool ClpInterior::sanityCheck()
       << static_cast< FloatT >(largestBound)
       << static_cast< FloatT >(minimumGap)
       << CoinMessageEol;
-  minimumGap = 1.0e100;
-  smallestBound = 1.0e100;
+  minimumGap = OneE100;
+  smallestBound = OneE100;
   largestBound = 0.0;
   for (i = 0; i < numberColumns_; i++) {
     CoinWorkDouble value;
     value = CoinAbs(cost_[i]);
-    if (value > 1.0e50) {
+    if (value > OneE50) {
       numberBad++;
       if (firstBad < 0)
         firstBad = i;
@@ -841,14 +841,14 @@ bool ClpInterior::sanityCheck()
       if (value < minimumGap)
         minimumGap = value;
     }
-    if (lower_[i] > -1.0e100 && lower_[i]) {
+    if (lower_[i] > -OneE100 && lower_[i]) {
       value = CoinAbs(lower_[i]);
       if (value > largestBound)
         largestBound = value;
       if (value < smallestBound)
         smallestBound = value;
     }
-    if (upper_[i] < 1.0e100 && upper_[i]) {
+    if (upper_[i] < OneE100 && upper_[i]) {
       value = CoinAbs(upper_[i]);
       if (value > largestBound)
         largestBound = value;
@@ -990,8 +990,8 @@ void ClpInterior::checkSolution()
   const CoinWorkDouble *upper = upper_ + numberColumns_;
   for (iRow = 0; iRow < numberRows_; iRow++) {
     CoinWorkDouble infeasibility = 0.0;
-    CoinWorkDouble distanceUp = CoinMin(upper[iRow] - rowActivity_[iRow], static_cast< CoinWorkDouble >(1.0e10));
-    CoinWorkDouble distanceDown = CoinMin(rowActivity_[iRow] - lower[iRow], static_cast< CoinWorkDouble >(1.0e10));
+    CoinWorkDouble distanceUp = CoinMin(upper[iRow] - rowActivity_[iRow], static_cast< CoinWorkDouble >(OneE10));
+    CoinWorkDouble distanceDown = CoinMin(rowActivity_[iRow] - lower[iRow], static_cast< CoinWorkDouble >(OneE10));
     if (distanceUp > primalTolerance2) {
       CoinWorkDouble value = dual[iRow];
       // should not be negative
@@ -1028,8 +1028,8 @@ void ClpInterior::checkSolution()
   for (iColumn = 0; iColumn < numberColumns_; iColumn++) {
     CoinWorkDouble infeasibility = 0.0;
     objectiveValue_ += cost_[iColumn] * columnActivity_[iColumn];
-    CoinWorkDouble distanceUp = CoinMin(upper[iColumn] - columnActivity_[iColumn], static_cast< CoinWorkDouble >(1.0e10));
-    CoinWorkDouble distanceDown = CoinMin(columnActivity_[iColumn] - lower[iColumn], static_cast< CoinWorkDouble >(1.0e10));
+    CoinWorkDouble distanceUp = CoinMin(upper[iColumn] - columnActivity_[iColumn], static_cast< CoinWorkDouble >(OneE10));
+    CoinWorkDouble distanceDown = CoinMin(columnActivity_[iColumn] - lower[iColumn], static_cast< CoinWorkDouble >(OneE10));
     if (distanceUp > primalTolerance2) {
       CoinWorkDouble value = reducedCost[iColumn];
       // should not be negative

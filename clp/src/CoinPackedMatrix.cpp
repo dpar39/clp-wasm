@@ -3463,7 +3463,7 @@ int CoinPackedMatrix::verifyMtx(int verbosity, bool zeroesAreError) const
 
 {
   const FloatT smallCoeff = 1.0e-50;
-  const FloatT largeCoeff = 1.0e50;
+  const FloatT largeCoeff = OneE50;
 
   int majDim = majorDim_;
   int minDim = minorDim_;

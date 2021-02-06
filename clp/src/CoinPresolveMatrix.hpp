@@ -1098,7 +1098,7 @@ public:
   {
     dobias_ += change_amount;
 #if PRESOLVE_DEBUG > 2
-    assert(CoinAbs(change_amount) < 1.0e50);
+    assert(CoinAbs(change_amount) < OneE50);
     if (change_amount)
       PRESOLVE_STMT(printf("changing bias by %g to %g\n",
         change_amount, dobias_));

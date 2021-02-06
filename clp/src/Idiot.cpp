@@ -423,7 +423,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
   FloatT reasonableInfeas = reasonableInfeas_;
   FloatT stopMu = stopMu_;
   FloatT maxmin, offset;
-  FloatT lastWeighted = 1.0e50;
+  FloatT lastWeighted = OneE50;
   FloatT exitDrop = exitDrop_;
   FloatT fakeSmall = smallInfeas;
   FloatT firstInfeas;
@@ -657,7 +657,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
   }
   /* compute reasonable solution cost */
   for (i = 0; i < nrows; i++) {
-    rowsol[i] = 1.0e31;
+    rowsol[i] = OneE31;
   }
   for (i = 0; i < ncols; i++) {
     CoinBigIndex j;
@@ -699,15 +699,15 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
       int icol, irow;
 #if IDIOT_SCALE < 0
       for (irow = 0; irow < nrows; irow++) {
-        rowlower[irow] = 1.0e100;
+        rowlower[irow] = OneE100;
         rowupper[irow] = 1.0e-100;
       }
 #endif
       for (icol = 0; icol < ncols; icol++) {
         FloatT multiplier = 1.0 / columnScale[icol];
-        if (lower[icol] > -1.0e50)
+        if (lower[icol] > -OneE50)
           lower[icol] *= multiplier;
-        if (upper[icol] < 1.0e50)
+        if (upper[icol] < OneE50)
           upper[icol] *= multiplier;
         colsol[icol] *= multiplier;
         cost[icol] *= columnScale[icol];
@@ -749,9 +749,9 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
       CoinMemcpyN(model_->rowLower(), nrows, rowlower);
       for (irow = 0; irow < nrows; irow++) {
         FloatT multiplier = rowScale[irow];
-        if (rowlower[irow] > -1.0e50)
+        if (rowlower[irow] > -OneE50)
           rowlower[irow] *= multiplier;
-        if (rowupper[irow] < 1.0e50)
+        if (rowupper[irow] < OneE50)
           rowupper[irow] *= multiplier;
         rowsol[irow] *= multiplier;
       }
@@ -851,9 +851,9 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
     reasonableInfeas = 0.5 * firstInfeas;
   if (lastResult.infeas < reasonableInfeas)
     lastResult.infeas = reasonableInfeas;
-  FloatT keepinfeas = 1.0e31;
-  FloatT lastInfeas = 1.0e31;
-  FloatT bestInfeas = 1.0e31;
+  FloatT keepinfeas = OneE31;
+  FloatT lastInfeas = OneE31;
+  FloatT bestInfeas = OneE31;
   while ((mu > stopMu && lastResult.infeas > smallInfeas) || (lastResult.infeas <= smallInfeas && dropping(lastResult, exitDrop, smallInfeas, &badIts)) || checkIteration < 2 || lambdaIteration < lambdaIterations_) {
     if (lastResult.infeas <= exitFeasibility_)
       break;
@@ -984,7 +984,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
           mu *= 1.0e-1;
         else
           mu *= 0.7;
-        bestFeasible = 1.0e31;
+        bestFeasible = OneE31;
         bestWeighted = 1.0e60;
         numberBaseTrys++;
         if (mu < 1.0e-30 || (numberBaseTrys > 10 && lightWeight_)) {
@@ -1030,7 +1030,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
           }
           result.weighted = 1.0e60;
           nTry = 0;
-          bestFeasible = 1.0e31;
+          bestFeasible = OneE31;
           bestWeighted = 1.0e60;
           checkIteration = 0;
           lambdaIteration = 0;
@@ -1097,7 +1097,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
           bestFeasible = 1.0e32;
           bestWeighted = 1.0e60;
           checkIteration = 0;
-          result.weighted = 1.0e31;
+          result.weighted = OneE31;
         }
 #ifdef DEBUG
         FloatT trueCost = 0.0;
@@ -1116,7 +1116,7 @@ void Idiot::solve2(CoinMessageHandler *handler, const CoinMessages *messages)
         bestFeasible = 1.0e32;
         bestWeighted = 1.0e60;
         checkIteration = 0;
-        result.weighted = 1.0e31;
+        result.weighted = OneE31;
       }
     }
     if (iteration >= majorIterations_) {
@@ -2245,7 +2245,7 @@ Idiot::Idiot()
   stopMu_ = 1e-12;
   smallInfeas_ = 1e-1;
   reasonableInfeas_ = 1e2;
-  muAtExit_ = 1.0e31;
+  muAtExit_ = OneE31;
   strategy_ = 8;
   lambdaIterations_ = 0;
   checkFrequency_ = 100;
@@ -2281,7 +2281,7 @@ Idiot::Idiot(OsiSolverInterface &model)
   stopMu_ = 1e-12;
   smallInfeas_ = 1e-1;
   reasonableInfeas_ = 1e2;
-  muAtExit_ = 1.0e31;
+  muAtExit_ = OneE31;
   strategy_ = 8;
   lambdaIterations_ = 0;
   checkFrequency_ = 100;

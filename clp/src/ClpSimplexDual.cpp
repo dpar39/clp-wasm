@@ -491,7 +491,7 @@ void ClpSimplexDual::gutsOfDual(int ifValuesPass, FloatT *&saveDuals, int initia
       ifValuesPass);
     smallestPrimalInfeasibility = CoinMin(smallestPrimalInfeasibility,
       sumPrimalInfeasibilities_);
-    if (sumPrimalInfeasibilities_ > 1.0e5 && sumPrimalInfeasibilities_ > 1.0e5 * smallestPrimalInfeasibility && (moreSpecialOptions_ & 256) == 0 && ((progress_.lastObjective(0) < -1.0e10 && -progress_.lastObjective(1) > -1.0e5) || sumPrimalInfeasibilities_ > 1.0e10 * smallestPrimalInfeasibility) && problemStatus_ < 0) {
+    if (sumPrimalInfeasibilities_ > 1.0e5 && sumPrimalInfeasibilities_ > 1.0e5 * smallestPrimalInfeasibility && (moreSpecialOptions_ & 256) == 0 && ((progress_.lastObjective(0) < -OneE10 && -progress_.lastObjective(1) > -1.0e5) || sumPrimalInfeasibilities_ > OneE10 * smallestPrimalInfeasibility) && problemStatus_ < 0) {
       // problems - try primal
       problemStatus_ = 10;
       // mark as large infeasibility cost wanted
@@ -558,7 +558,7 @@ void ClpSimplexDual::gutsOfDual(int ifValuesPass, FloatT *&saveDuals, int initia
     }
     // Do iterations
     int returnCode = whileIterating(saveDuals, ifValuesPass);
-    if (problemStatus_ == 1 && (progressFlag_ & 8) != 0 && CoinAbs(objectiveValue_) > 1.0e10)
+    if (problemStatus_ == 1 && (progressFlag_ & 8) != 0 && CoinAbs(objectiveValue_) > OneE10)
       problemStatus_ = 10; // infeasible - but has looked feasible
 #ifdef CLP_INVESTIGATE_SERIAL
     nPivots = factorization_->pivots();
@@ -629,7 +629,7 @@ int ClpSimplexDual::dual(int ifValuesPass, int startFinishOptions)
     // see if cutoff reached
     FloatT limit = 0.0;
     getDblParam(ClpDualObjectiveLimit, limit);
-    if (CoinAbs(limit) < 1.0e30 && objectiveValue() * optimizationDirection_ > limit + 1.0e-7 + 1.0e-8 * CoinAbs(limit)) {
+    if (CoinAbs(limit) < OneE30 && objectiveValue() * optimizationDirection_ > limit + 1.0e-7 + 1.0e-8 * CoinAbs(limit)) {
       // actually infeasible on objective
       problemStatus_ = 1;
       secondaryStatus_ = 1;
@@ -964,7 +964,7 @@ int ClpSimplexDual::whileIterating(FloatT *&givenDuals, int ifValuesPass)
         continue;
       if (CoinAbs(dj_[iPivot]) > dualTolerance_) {
         // for now safer to ignore free ones
-        if (lower_[iPivot] > -1.0e50 || upper_[iPivot] < 1.0e50)
+        if (lower_[iPivot] > -OneE50 || upper_[iPivot] < OneE50)
           if (pivoted(iPivot))
             candidateList[numberCandidates++] = iRow;
       } else {
@@ -1268,7 +1268,7 @@ int ClpSimplexDual::whileIterating(FloatT *&givenDuals, int ifValuesPass)
 #endif
       } else {
         // Make sure direction plausible
-        CoinAssert(upperOut_ < 1.0e50 || lowerOut_ > -1.0e50);
+        CoinAssert(upperOut_ < OneE50 || lowerOut_ > -OneE50);
         // If in integer cleanup do direction using duals
         // may be wrong way round
         if (ifValuesPass == 2) {
@@ -1536,7 +1536,7 @@ int ClpSimplexDual::whileIterating(FloatT *&givenDuals, int ifValuesPass)
             (moreSpecialOptions_ & 16) != 0,
             acceptablePivot);
         // If looks like bad pivot - refactorize
-        if (CoinAbs(dualOut_) > 1.0e50)
+        if (CoinAbs(dualOut_) > OneE50)
           updateStatus = 2;
         // if no pivots, bad update but reasonable alpha - take and invert
         if (updateStatus == 2 && !factorization_->pivots() && CoinAbs(alpha_) > 1.0e-5)
@@ -1899,7 +1899,7 @@ int ClpSimplexDual::whileIterating(FloatT *&givenDuals, int ifValuesPass)
             ray_ = NULL;
           }
           // If we have just factorized and infeasibility reasonable say infeas
-          FloatT dualTest = ((specialOptions_ & 4096) != 0) ? 1.0e8 : 1.0e13;
+          FloatT dualTest = ((specialOptions_ & 4096) != 0) ? 1.0e8 : OneE13;
           // but if none at fake bounds
           if (!checkFakeBounds())
             dualTest = 0.0;
@@ -2399,7 +2399,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
           FloatT movement = mult * (lower[iSequence] - upper[iSequence]);
           which[numberInfeasibilities++] = iSequence;
 #ifndef NDEBUG
-          if (CoinAbs(movement) >= 1.0e30)
+          if (CoinAbs(movement) >= OneE30)
             resetFakeBounds(-1000 - iSequence);
 #endif
 #ifdef CLP_DEBUG
@@ -2461,7 +2461,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
             workV[j] = 0.0;
             whichX[numberInfeasibilities++] = iSequence;
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
             changeObj += movement * cost[iSequence];
@@ -2489,7 +2489,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
               FloatT movement = mult * (upper[iSequence] - lower[iSequence]);
               which[numberInfeasibilities++] = iSequence;
 #ifndef NDEBUG
-              if (CoinAbs(movement) >= 1.0e30)
+              if (CoinAbs(movement) >= OneE30)
                 resetFakeBounds(-1000 - iSequence);
 #endif
 #ifdef CLP_DEBUG
@@ -2522,7 +2522,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
             which[numberInfeasibilities++] = iSequence;
             movement = upper[iSequence] - lower[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
 #ifdef CLP_DEBUG
@@ -2543,7 +2543,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
             which[numberInfeasibilities++] = iSequence;
             movement = lower[iSequence] - upper[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
 #ifdef CLP_DEBUG
@@ -2590,12 +2590,12 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
               setFakeBound(iSequence + numberColumns_,
                 ClpSimplexDual::lowerFake);
               lower[iSequence] = upper[iSequence] - dualBound_;
-              assert(CoinAbs(lower[iSequence]) < 1.0e30);
+              assert(CoinAbs(lower[iSequence]) < OneE30);
               movement = lower[iSequence] - upper[iSequence];
               numberFake_++;
 #ifndef NDEBUG
             } else {
-              if (CoinAbs(movement) >= 1.0e30)
+              if (CoinAbs(movement) >= OneE30)
                 resetFakeBounds(-1000 - iSequence);
 #endif
             }
@@ -2610,7 +2610,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
           if (bound == ClpSimplexDual::upperFake) {
             movement = lower[iSequence] - upper[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
             setStatus(iSequence + numberColumns_, atLowerBound);
@@ -2636,12 +2636,12 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
               setFakeBound(iSequence + numberColumns_,
                 ClpSimplexDual::upperFake);
               upper[iSequence] = lower[iSequence] + dualBound_;
-              assert(CoinAbs(upper[iSequence]) < 1.0e30);
+              assert(CoinAbs(upper[iSequence]) < OneE30);
               movement = upper[iSequence] - lower[iSequence];
               numberFake_++;
 #ifndef NDEBUG
             } else {
-              if (CoinAbs(movement) >= 1.0e30)
+              if (CoinAbs(movement) >= OneE30)
                 resetFakeBounds(-1000 - iSequence);
 #endif
             }
@@ -2656,7 +2656,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
           if (bound == ClpSimplexDual::lowerFake) {
             movement = upper[iSequence] - lower[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
             setStatus(iSequence + numberColumns_, atUpperBound);
@@ -2699,12 +2699,12 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
               setFakeBound(iSequence,
                 ClpSimplexDual::upperFake);
               upper[iSequence] = lower[iSequence] + dualBound_;
-              assert(CoinAbs(upper[iSequence]) < 1.0e30);
+              assert(CoinAbs(upper[iSequence]) < OneE30);
               movement = upper[iSequence] - lower[iSequence];
               numberFake_++;
 #ifndef NDEBUG
             } else {
-              if (CoinAbs(movement) >= 1.0e30)
+              if (CoinAbs(movement) >= OneE30)
                 resetFakeBounds(-1000 - iSequence);
 #endif
             }
@@ -2719,7 +2719,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
           if (bound == ClpSimplexDual::lowerFake) {
             movement = upper[iSequence] - lower[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
             setStatus(iSequence, atUpperBound);
@@ -2745,12 +2745,12 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
               setFakeBound(iSequence,
                 ClpSimplexDual::lowerFake);
               lower[iSequence] = upper[iSequence] - dualBound_;
-              assert(CoinAbs(lower[iSequence]) < 1.0e30);
+              assert(CoinAbs(lower[iSequence]) < OneE30);
               movement = lower[iSequence] - upper[iSequence];
               numberFake_++;
 #ifndef NDEBUG
             } else {
-              if (CoinAbs(movement) >= 1.0e30)
+              if (CoinAbs(movement) >= OneE30)
                 resetFakeBounds(-1000 - iSequence);
 #endif
             }
@@ -2765,7 +2765,7 @@ int ClpSimplexDual::updateDualsInDual(CoinIndexedVector *rowArray,
           if (bound == ClpSimplexDual::upperFake) {
             movement = lower[iSequence] - upper[iSequence];
 #ifndef NDEBUG
-            if (CoinAbs(movement) >= 1.0e30)
+            if (CoinAbs(movement) >= OneE30)
               resetFakeBounds(-1000 - iSequence);
 #endif
             setStatus(iSequence, atLowerBound);
@@ -3183,13 +3183,13 @@ int ClpSimplexDual::changeBounds(int initialize,
             FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
             // lower
             FloatT value = columnLower_[iSequence];
-            if (value > -1.0e30) {
+            if (value > -OneE30) {
               value *= multiplier;
             }
             lower_[iSequence] = value;
             // upper
             value = columnUpper_[iSequence];
-            if (value < 1.0e30) {
+            if (value < OneE30) {
               value *= multiplier;
             }
             upper_[iSequence] = value;
@@ -3200,13 +3200,13 @@ int ClpSimplexDual::changeBounds(int initialize,
           // lower
           FloatT multiplier = rhsScale_ * rowScale_[iSequence];
           FloatT value = rowLower_[iSequence];
-          if (value > -1.0e30) {
+          if (value > -OneE30) {
             value *= multiplier;
           }
           lower_[iSequence + numberColumns_] = value;
           // upper
           value = rowUpper_[iSequence];
-          if (value < 1.0e30) {
+          if (value < OneE30) {
             value *= multiplier;
           }
           upper_[iSequence + numberColumns_] = value;
@@ -3287,13 +3287,13 @@ int ClpSimplexDual::changeBounds(int initialize,
               FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
               // lower
               FloatT value = columnLower_[iSequence];
-              if (value > -1.0e30) {
+              if (value > -OneE30) {
                 value *= multiplier;
               }
               lower_[iSequence] = value;
               // upper
               value = columnUpper_[iSequence];
-              if (value < 1.0e30) {
+              if (value < OneE30) {
                 value *= multiplier;
               }
               upper_[iSequence] = value;
@@ -3309,13 +3309,13 @@ int ClpSimplexDual::changeBounds(int initialize,
               // lower
               FloatT multiplier = rhsScale_ * rowScale_[iRow];
               FloatT value = rowLower_[iRow];
-              if (value > -1.0e30) {
+              if (value > -OneE30) {
                 value *= multiplier;
               }
               lower_[iSequence] = value;
               // upper
               value = rowUpper_[iRow];
-              if (value < 1.0e30) {
+              if (value < OneE30) {
                 value *= multiplier;
               }
               upper_[iSequence] = value;
@@ -3341,7 +3341,7 @@ int ClpSimplexDual::changeBounds(int initialize,
           if ((static_cast< int >(fakeStatus) & 1) != 0) {
             // lower
             FloatT value = columnLower_[iSequence];
-            if (value > -1.0e30) {
+            if (value > -OneE30) {
               FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
               value *= multiplier;
             }
@@ -3350,7 +3350,7 @@ int ClpSimplexDual::changeBounds(int initialize,
           if ((static_cast< int >(fakeStatus) & 2) != 0) {
             // upper
             FloatT value = columnUpper_[iSequence];
-            if (value < 1.0e30) {
+            if (value < OneE30) {
               FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
               value *= multiplier;
             }
@@ -3364,7 +3364,7 @@ int ClpSimplexDual::changeBounds(int initialize,
           if ((static_cast< int >(fakeStatus) & 1) != 0) {
             // lower
             FloatT value = rowLower_[iSequence];
-            if (value > -1.0e30) {
+            if (value > -OneE30) {
               FloatT multiplier = rhsScale_ * rowScale_[iSequence];
               value *= multiplier;
             }
@@ -3373,7 +3373,7 @@ int ClpSimplexDual::changeBounds(int initialize,
           if ((static_cast< int >(fakeStatus) & 2) != 0) {
             // upper
             FloatT value = rowUpper_[iSequence];
-            if (value < 1.0e30) {
+            if (value < OneE30) {
               FloatT multiplier = rhsScale_ * rowScale_[iSequence];
               value *= multiplier;
             }
@@ -3450,7 +3450,7 @@ dualColumn00(clpTempInfo &info)
   FloatT acceptablePivot = info.acceptablePivot;
   FloatT dualTolerance = info.tolerance;
   int numberToDo = info.numberToDo;
-  FloatT tentativeTheta = 1.0e15;
+  FloatT tentativeTheta = OneE15;
   int numberRemaining = 0;
   FloatT multiplier[] = { -1.0, 1.0 };
   FloatT dualT = -dualTolerance;
@@ -3574,8 +3574,8 @@ int ClpSimplexDual::dualColumn0(const CoinIndexedVector *rowArray,
   const int *which;
   const FloatT *reducedCost;
   // We can also see if infeasible or pivoting on free
-  FloatT tentativeTheta = 1.0e15;
-  FloatT upperTheta = 1.0e31;
+  FloatT tentativeTheta = OneE15;
+  FloatT upperTheta = OneE31;
   FloatT freePivot = acceptablePivot;
   int numberRemaining = 0;
   int i;
@@ -4036,7 +4036,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
       */
 
   // do first pass to get possibles
-  upperTheta = 1.0e31;
+  upperTheta = OneE31;
   FloatT bestPossible = 1.0;
   FloatT badFree = 0.0;
   alpha_ = 0.0;
@@ -4057,7 +4057,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
 #undef NDEBUG
                int n = numberRemaining;
                FloatT u = upperTheta;
-               upperTheta = 1.0e31;
+               upperTheta = OneE31;
 	       CoinIndexedVector temp(4000);
                numberRemaining = dualColumn0(rowArray, columnArray, &temp,
                                              acceptablePivot, upperTheta, badFree);
@@ -4079,7 +4079,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
   // switch off
   spareIntArray_[0] = 0;
   // We can also see if infeasible or pivoting on free
-  FloatT tentativeTheta = 1.0e25;
+  FloatT tentativeTheta = OneE25;
   interesting[0] = numberRemaining;
   marker[0][0] = numberRemaining;
 
@@ -4095,7 +4095,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
     // free variable - always choose
   } else {
 
-    theta_ = 1.0e50;
+    theta_ = OneE50;
     // now flip flop between spare arrays until reasonable theta
     tentativeTheta = CoinMax(10.0 * upperTheta, 1.0e-7);
 
@@ -4110,7 +4110,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
       numberPossiblySwapped = numberColumns_;
       numberRemaining = 0;
 
-      upperTheta = 1.0e50;
+      upperTheta = OneE50;
 
       spare = array[iFlip];
       index = indices[iFlip];
@@ -4206,11 +4206,11 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
         }
         interesting[iFlip] = numberRemaining;
         int iTry;
-#define MAXTRY 100
+        constexpr auto MAX_TRY = 100;
         // first get ratio with tolerance
-        for (iTry = 0; iTry < MAXTRY; iTry++) {
+        for (iTry = 0; iTry < MAX_TRY; iTry++) {
 
-          upperTheta = 1.0e50;
+          upperTheta = OneE50;
           numberPossiblySwapped = numberColumns_;
           numberRemaining = 0;
 
@@ -4431,7 +4431,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
             modifyCosts = true; // fine grain - we can modify costs
           }
         }
-        if (iTry == MAXTRY)
+        if (iTry == MAX_TRY)
           iFlip = 1 - iFlip; // flip back
         break;
       } else {
@@ -4463,12 +4463,11 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
       iFlip = 1 - iFlip;
     }
 
-#define MINIMUMTHETA 1.0e-18
     // Movement should be minimum for anti-degeneracy - unless
     // fixed variable out
     FloatT minimumTheta;
     if (upperOut_ > lowerOut_)
-      minimumTheta = MINIMUMTHETA;
+      minimumTheta = 1.0e-18;
     else
       minimumTheta = 0.0;
     if (sequenceIn_ >= 0) {
@@ -4652,8 +4651,8 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
       int number;
       const int *which;
       const FloatT *reducedCost;
-      FloatT tentativeTheta = 1.0e15;
-      //FloatT upperTheta = 1.0e31;
+      FloatT tentativeTheta = OneE15;
+      //FloatT upperTheta = OneE31;
       bestPossible = 0.0;
       //FloatT multiplier[] = { -1.0, 1.0 };
       FloatT dualT = -dualTolerance_;
@@ -4723,9 +4722,7 @@ ClpSimplexDual::dualColumn(CoinIndexedVector *rowArray,
   }
   return bestPossible;
 }
-#ifdef CLP_ALL_ONE_FILE
-#undef MAXTRY
-#endif
+
 /* Checks if tentative optimal actually means unbounded
    Returns -3 if not, 2 if is unbounded */
 int ClpSimplexDual::checkUnbounded(CoinIndexedVector *ray,
@@ -4758,7 +4755,7 @@ int ClpSimplexDual::checkUnbounded(CoinIndexedVector *ray,
     way = 0.0;
     status = -3;
   }
-  FloatT movement = 1.0e10 * way; // some largish number
+  FloatT movement = OneE10* way; // some largish number
   FloatT zeroTolerance = 1.0e-14 * dualBound_;
   for (i = 0; i < number; i++) {
     int iRow = index[i];
@@ -5023,7 +5020,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
     gutsOfSolution(givenDuals, NULL);
 #endif
   // If bad accuracy treat as singular
-  if ((largestPrimalError_ > 1.0e15 || largestDualError_ > 1.0e15) && numberIterations_) {
+  if ((largestPrimalError_ > OneE15 || largestDualError_ > OneE15) && numberIterations_) {
     // restore previous basis
     unflagVariables = false;
     changeMade_++; // say something changed
@@ -5126,7 +5123,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
   } else {
     FloatT thisObj = objectiveValue_ - bestPossibleImprovement_;
 #ifdef CLP_INVESTIGATE
-    assert(bestPossibleImprovement_ > -1000.0 && objectiveValue_ > -1.0e100);
+    assert(bestPossibleImprovement_ > -1000.0 && objectiveValue_ > -OneE100);
     if (bestPossibleImprovement_)
       printf("obj %g add in %g -> %g\n", objectiveValue_, bestPossibleImprovement_,
         thisObj);
@@ -5360,7 +5357,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
 #if 0
      count_status++;
      if (!numberIterations_)
-       obj_status=-1.0e30;
+       obj_status=-OneE30;
      if (objectiveValue()<obj_status-0.01) {
        printf("Backward obj at %d from %g to %g\n",
 	      count_status,obj_status,objectiveValue());
@@ -5444,7 +5441,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
       FloatT limit = 0.0;
       getDblParam(ClpDualObjectiveLimit, limit);
 #if 0
-               if(CoinAbs(limit) < 1.0e30 && objectiveValue()*optimizationDirection_ >
+               if(CoinAbs(limit) < OneE30 && objectiveValue()*optimizationDirection_ >
                          limit + 1.0e-7 + 1.0e-8 * CoinAbs(limit) && !numberAtFakeBound()) {
                     //looks infeasible on objective
                     if (perturbation_ == 101) {
@@ -5800,7 +5797,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
                     CoinMemcpyN(solution_, (numberRows_ + numberColumns_), xsolution);
 #endif
         if (givenDuals)
-          dualTolerance_ = 1.0e50;
+          dualTolerance_ = OneE50;
 #if CLP_CAN_HAVE_ZERO_OBJ > 1
         if ((specialOptions_ & 16777216) == 0) {
 #endif
@@ -5842,7 +5839,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
         // for now - recompute all
         gutsOfSolution(NULL, NULL);
         if (givenDuals)
-          dualTolerance_ = 1.0e50;
+          dualTolerance_ = OneE50;
 #if CLP_CAN_HAVE_ZERO_OBJ > 1
         if ((specialOptions_ & 16777216) == 0) {
 #endif
@@ -5989,13 +5986,13 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
   FloatT limit = 0.0;
   getDblParam(ClpDualObjectiveLimit, limit);
 #if 0
-     if(CoinAbs(limit) < 1.0e30 && objectiveValue()*optimizationDirection_ >
+     if(CoinAbs(limit) < OneE30 && objectiveValue()*optimizationDirection_ >
                limit + 100.0) {
           printf("lim %g obj %g %g - wo perturb %g sum dual %g\n",
                  limit, objectiveValue_, objectiveValue(), computeInternalObjectiveValue(), sumDualInfeasibilities_);
      }
 #endif
-  if (CoinAbs(limit) < 1.0e30 && objectiveValue() * optimizationDirection_ > limit && !numberAtFakeBound()) {
+  if (CoinAbs(limit) < OneE30 && objectiveValue() * optimizationDirection_ > limit && !numberAtFakeBound()) {
     bool looksInfeasible = !numberDualInfeasibilities_;
     if (objectiveValue() * optimizationDirection_ > limit + CoinAbs(0.1 * limit) + 1.0e2 * sumDualInfeasibilities_ + 1.0e4 && sumDualInfeasibilities_ < largestDualError_ && numberIterations_ > 0.5 * numberRows_ + 1000)
       looksInfeasible = true;
@@ -6019,7 +6016,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
     if (largestPrimalError_ * largestDualError_ > 1.0e2) {
       looksBad = 1;
     } else if (largestPrimalError_ > 1.0e-2
-      && objectiveValue_ > CoinMin(1.0e15, 1.0e3 * limit)) {
+      && objectiveValue_ > CoinMin(OneE15, 1.0e3 * limit)) {
       looksBad = 2;
     }
     if (looksBad) {
@@ -6125,7 +6122,7 @@ void ClpSimplexDual::statusOfProblemInDual(int &lastCleaned, int type,
   // Maybe only in fast dual
   if (problemStatus_ > 2)
     objectiveValue_ = approximateObjective;
-  if (problemStatus_ == 1 && (progressFlag_ & 8) != 0 && CoinAbs(objectiveValue_) > 1.0e10)
+  if (problemStatus_ == 1 && (progressFlag_ & 8) != 0 && CoinAbs(objectiveValue_) > OneE10)
     problemStatus_ = 10; // infeasible - but has looked feasible
 }
 /* While updateDualsInDual sees what effect is of flip
@@ -6201,14 +6198,14 @@ void ClpSimplexDual::originalBound(int iSequence)
       rowLowerWork_[iRow] = rowLower_[iRow];
       rowUpperWork_[iRow] = rowUpper_[iRow];
       if (rowScale_) {
-        if (rowLowerWork_[iRow] > -1.0e50)
+        if (rowLowerWork_[iRow] > -OneE50)
           rowLowerWork_[iRow] *= rowScale_[iRow] * rhsScale_;
-        if (rowUpperWork_[iRow] < 1.0e50)
+        if (rowUpperWork_[iRow] < OneE50)
           rowUpperWork_[iRow] *= rowScale_[iRow] * rhsScale_;
       } else if (rhsScale_ != 1.0) {
-        if (rowLowerWork_[iRow] > -1.0e50)
+        if (rowLowerWork_[iRow] > -OneE50)
           rowLowerWork_[iRow] *= rhsScale_;
-        if (rowUpperWork_[iRow] < 1.0e50)
+        if (rowUpperWork_[iRow] < OneE50)
           rowUpperWork_[iRow] *= rhsScale_;
       }
     } else {
@@ -6217,14 +6214,14 @@ void ClpSimplexDual::originalBound(int iSequence)
       columnUpperWork_[iSequence] = columnUpper_[iSequence];
       if (rowScale_) {
         FloatT multiplier = 1.0 * inverseColumnScale_[iSequence];
-        if (columnLowerWork_[iSequence] > -1.0e50)
+        if (columnLowerWork_[iSequence] > -OneE50)
           columnLowerWork_[iSequence] *= multiplier * rhsScale_;
-        if (columnUpperWork_[iSequence] < 1.0e50)
+        if (columnUpperWork_[iSequence] < OneE50)
           columnUpperWork_[iSequence] *= multiplier * rhsScale_;
       } else if (rhsScale_ != 1.0) {
-        if (columnLowerWork_[iSequence] > -1.0e50)
+        if (columnLowerWork_[iSequence] > -OneE50)
           columnLowerWork_[iSequence] *= rhsScale_;
-        if (columnUpperWork_[iSequence] < 1.0e50)
+        if (columnUpperWork_[iSequence] < OneE50)
           columnUpperWork_[iSequence] *= rhsScale_;
       }
     }
@@ -6276,13 +6273,13 @@ static void breakdown(const char *name, int numberLook, const FloatT *region)
 {
   FloatT range[] = {
     -COIN_DBL_MAX,
-    -1.0e15, -1.0e11, -1.0e8, -1.0e5, -1.0e4, -1.0e3, -1.0e2, -1.0e1,
+    -OneE15, -OneE11, -1.0e8, -1.0e5, -1.0e4, -1.0e3, -1.0e2, -1.0e1,
     -1.0,
     -1.0e-1, -1.0e-2, -1.0e-3, -1.0e-4, -1.0e-5, -1.0e-8, -1.0e-11, -1.0e-15,
     0.0,
     1.0e-15, 1.0e-11, 1.0e-8, 1.0e-5, 1.0e-4, 1.0e-3, 1.0e-2, 1.0e-1,
     1.0,
-    1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e8, 1.0e11, 1.0e15,
+    1.0e1, 1.0e2, 1.0e3, 1.0e4, 1.0e5, 1.0e8, OneE11, OneE15,
     COIN_DBL_MAX
   };
   int nRanges = static_cast< int >(sizeof(range) / sizeof(FloatT));
@@ -6388,7 +6385,7 @@ int ClpSimplexDual::perturb()
     //printf("ratio number diff costs %g, element ratio %g\n",((FloatT)number)/((FloatT) numberColumns_),
     //								      elementRatio);
     //number=0;
-    //if (number*4>numberColumns_||elementRatio>1.0e12) {
+    //if (number*4>numberColumns_||elementRatio>OneE12) {
     if (number * 4 > numberColumns_) {
       perturbation_ = 100;
       return 0; // good enough
@@ -6425,7 +6422,7 @@ int ClpSimplexDual::perturb()
     //maximumFraction = 1.0e-6;
   }
   int iRow;
-  FloatT smallestNonZero = 1.0e100;
+  FloatT smallestNonZero = OneE100;
   numberNonZero = 0;
   if (perturbation_ >= 50) {
     perturbation = 1.0e-8;
@@ -6444,7 +6441,7 @@ int ClpSimplexDual::perturb()
           smallestNonZero = CoinMin(smallestNonZero, value);
         }
       }
-      if (lo && lo > -1.0e10) {
+      if (lo && lo > -OneE10) {
         numberNonZero++;
         lo = CoinAbs(lo);
         if (!lastValue)
@@ -6452,7 +6449,7 @@ int ClpSimplexDual::perturb()
         else if (CoinAbs(lo - lastValue) > 1.0e-7)
           allSame = false;
       }
-      if (up && up < 1.0e10) {
+      if (up && up < OneE10) {
         numberNonZero++;
         up = CoinAbs(up);
         if (!lastValue)
@@ -6472,7 +6469,7 @@ int ClpSimplexDual::perturb()
           smallestNonZero = CoinMin(smallestNonZero, value);
         }
       }
-      if (lo && lo > -1.0e10) {
+      if (lo && lo > -OneE10) {
         //numberNonZero++;
         lo = CoinAbs(lo);
         if (!lastValue2)
@@ -6480,7 +6477,7 @@ int ClpSimplexDual::perturb()
         else if (CoinAbs(lo - lastValue2) > 1.0e-7)
           allSame = false;
       }
-      if (up && up < 1.0e10) {
+      if (up && up < OneE10) {
         //numberNonZero++;
         up = CoinAbs(up);
         if (!lastValue2)
@@ -6745,7 +6742,7 @@ int ClpSimplexDual::perturb()
 }
 /* For strong branching.  On input lower and upper are new bounds
    while on output they are change in objective function values
-   (>1.0e50 infeasible).
+   (>OneE50 infeasible).
    Return code is 0 if nothing interesting, -1 if infeasible both
    ways and +1 if infeasible one way (check values to see which one(s))
    Returns -2 if bad factorization
@@ -6844,7 +6841,7 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
       upper_[iColumn] = (newUpper[i] * inverseColumnScale_[iColumn]) * rhsScale_; // scale
     // Start of fast iterations
     int status = fastDual(alwaysFinish);
-    CoinAssert(problemStatus_ || objectiveValue_ < 1.0e50);
+    CoinAssert(problemStatus_ || objectiveValue_ < OneE50);
 #ifdef CLP_DEBUG
     printf("first status %d obj %g\n", problemStatus_, objectiveValue_);
 #endif
@@ -6867,7 +6864,7 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
     if (status || (problemStatus_ == 0 && !isDualObjectiveLimitReached())) {
       objectiveChange = obj - saveObjectiveValue;
     } else {
-      objectiveChange = 1.0e100;
+      objectiveChange = OneE100;
       status = 1;
     }
     if (outputSolution) {
@@ -6916,7 +6913,7 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
       lower_[iColumn] = (newLower[i] * inverseColumnScale_[iColumn]) * rhsScale_; // scale
     // Start of fast iterations
     status = fastDual(alwaysFinish);
-    CoinAssert(problemStatus_ || objectiveValue_ < 1.0e50);
+    CoinAssert(problemStatus_ || objectiveValue_ < OneE50);
 #ifdef CLP_DEBUG
     printf("second status %d obj %g\n", problemStatus_, objectiveValue_);
 #endif
@@ -6939,7 +6936,7 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
     if (status || (problemStatus_ == 0 && !isDualObjectiveLimitReached())) {
       objectiveChange = obj - saveObjectiveValue;
     } else {
-      objectiveChange = 1.0e100;
+      objectiveChange = OneE100;
       status = 1;
     }
     if (outputSolution) {
@@ -6983,8 +6980,8 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
              Neither side feasible - set objective high and exit if desired
              One side feasible - change bounds and resolve
           */
-    if (newUpper[i] < 1.0e100) {
-      if (newLower[i] < 1.0e100) {
+    if (newUpper[i] < OneE100) {
+      if (newLower[i] < OneE100) {
         // feasible - no action
       } else {
         // up feasible, down infeasible
@@ -6993,7 +6990,7 @@ int ClpSimplexDual::strongBranching(int numberVariables, const int *variables,
           break;
       }
     } else {
-      if (newLower[i] < 1.0e100) {
+      if (newLower[i] < OneE100) {
         // down feasible, up infeasible
         returnCode = 1;
         if (stopOnFirstInfeasible)
@@ -7257,7 +7254,7 @@ int ClpSimplexDual::fastDual(bool alwaysFinish)
     // see if cutoff reached
     FloatT limit = 0.0;
     getDblParam(ClpDualObjectiveLimit, limit);
-    if (CoinAbs(limit) < 1.0e30 && objectiveValue() * optimizationDirection_ > limit + 1.0e-7 + 1.0e-8 * CoinAbs(limit)) {
+    if (CoinAbs(limit) < OneE30 && objectiveValue() * optimizationDirection_ > limit + 1.0e-7 + 1.0e-8 * CoinAbs(limit)) {
       // actually infeasible on objective
       problemStatus_ = 1;
       secondaryStatus_ = 1;
@@ -7533,9 +7530,9 @@ void ClpSimplexDual::checkPossibleValuesMove(CoinIndexedVector *rowArray,
 
   FloatT tolerance = dualTolerance_ * 1.001;
 
-  FloatT thetaDown = 1.0e31;
+  FloatT thetaDown = OneE31;
   FloatT changeDown;
-  FloatT thetaUp = 1.0e31;
+  FloatT thetaUp = OneE31;
   FloatT bestAlphaDown = acceptablePivot * 0.99999;
   FloatT bestAlphaUp = acceptablePivot * 0.99999;
   int sequenceDown = -1;
@@ -7676,7 +7673,7 @@ void ClpSimplexDual::checkPossibleValuesMove(CoinIndexedVector *rowArray,
   sequenceIn_ = -1;
   if (changeDown > changeUp && sequenceDown >= 0) {
     theta_ = thetaDown;
-    if (CoinAbs(changeDown) < 1.0e30)
+    if (CoinAbs(changeDown) < OneE30)
       sequenceIn_ = sequenceDown;
     alpha_ = alphaDown;
 #ifdef CLP_DEBUG
@@ -7686,7 +7683,7 @@ void ClpSimplexDual::checkPossibleValuesMove(CoinIndexedVector *rowArray,
 #endif
   } else {
     theta_ = thetaUp;
-    if (CoinAbs(changeUp) < 1.0e30)
+    if (CoinAbs(changeUp) < OneE30)
       sequenceIn_ = sequenceUp;
     alpha_ = alphaUp;
     if (sequenceIn_ != sequenceOut_) {
@@ -7736,8 +7733,8 @@ void ClpSimplexDual::checkPossibleCleanup(CoinIndexedVector *rowArray,
 
   FloatT tolerance = dualTolerance_ * 1.001;
 
-  FloatT thetaDown = 1.0e31;
-  FloatT thetaUp = 1.0e31;
+  FloatT thetaDown = OneE31;
+  FloatT thetaUp = OneE31;
   FloatT bestAlphaDown = acceptablePivot * 10.0;
   FloatT bestAlphaUp = acceptablePivot * 10.0;
   int sequenceDown = -1;
@@ -8108,14 +8105,14 @@ void ClpSimplexDual::resetFakeBounds(int type)
       for (iSequence = 0; iSequence < numberColumns_; iSequence++) {
         // lower
         FloatT value = columnLower_[iSequence];
-        if (value > -1.0e30) {
+        if (value > -OneE30) {
           FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
           value *= multiplier;
         }
         tempLower[iSequence] = value;
         // upper
         value = columnUpper_[iSequence];
-        if (value < 1.0e30) {
+        if (value < OneE30) {
           FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
           value *= multiplier;
         }
@@ -8124,14 +8121,14 @@ void ClpSimplexDual::resetFakeBounds(int type)
       for (iSequence = 0; iSequence < numberRows_; iSequence++) {
         // lower
         FloatT value = rowLower_[iSequence];
-        if (value > -1.0e30) {
+        if (value > -OneE30) {
           FloatT multiplier = rhsScale_ * rowScale_[iSequence];
           value *= multiplier;
         }
         tempLower[iSequence + numberColumns_] = value;
         // upper
         value = rowUpper_[iSequence];
-        if (value < 1.0e30) {
+        if (value < OneE30) {
           FloatT multiplier = rhsScale_ * rowScale_[iSequence];
           value *= multiplier;
         }
@@ -8279,7 +8276,7 @@ void ClpSimplexDual::resetFakeBounds(int type)
 #ifdef CLP_INVESTIGATE
         FloatT lowerValue = tempLower[iSequence];
         FloatT upperValue = tempUpper[iSequence];
-        printf("*** movement>1.0e30 for  %c%d %g <= %g <= %g true %g, %g - status %d\n",
+        printf("*** movement>OneE30 for  %c%d %g <= %g <= %g true %g, %g - status %d\n",
           RC, jSequence, lower_[iSequence], solution_[iSequence],
           upper_[iSequence], lowerValue, upperValue, status_[iSequence]);
 #endif
@@ -8299,13 +8296,13 @@ void ClpSimplexDual::resetFakeBounds(int type)
         FloatT multiplier = rhsScale_ * inverseColumnScale_[iSequence];
         // lower
         FloatT value = columnLower_[iSequence];
-        if (value > -1.0e30) {
+        if (value > -OneE30) {
           value *= multiplier;
         }
         lower_[iSequence] = value;
         // upper
         value = columnUpper_[iSequence];
-        if (value < 1.0e30) {
+        if (value < OneE30) {
           value *= multiplier;
         }
         upper_[iSequence] = value;
@@ -8314,13 +8311,13 @@ void ClpSimplexDual::resetFakeBounds(int type)
         // lower
         FloatT multiplier = rhsScale_ * rowScale_[iSequence];
         FloatT value = rowLower_[iSequence];
-        if (value > -1.0e30) {
+        if (value > -OneE30) {
           value *= multiplier;
         }
         lower_[iSequence + numberColumns_] = value;
         // upper
         value = rowUpper_[iSequence];
-        if (value < 1.0e30) {
+        if (value < OneE30) {
           value *= multiplier;
         }
         upper_[iSequence + numberColumns_] = value;

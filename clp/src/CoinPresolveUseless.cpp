@@ -98,12 +98,12 @@ const CoinPresolveAction *testRedundant(CoinPresolveMatrix *prob,
 */
 #define USE_SMALL_LARGE
 #ifdef USE_SMALL_LARGE
-  const FloatT large = 1.0e15;
+  const FloatT large = OneE15;
 #else
   const FloatT large = TOO_BIG_FLOAT;
 #endif
 #ifndef NDEBUG
-  const FloatT large2 = 1.0e10 * large;
+  const FloatT large2 = OneE10 * large;
 #endif
 
   FloatT feasTol = prob->feasibilityTolerance_;
@@ -222,8 +222,8 @@ const CoinPresolveAction *testRedundant(CoinPresolveMatrix *prob,
       markRow[i] = markActOK;
       finUpi += 1.0e-8 * CoinAbs(finUpi);
       finDowni -= 1.0e-8 * CoinAbs(finDowni);
-      const FloatT maxUpi = finUpi + infUpi * 1.0e31;
-      const FloatT maxDowni = finDowni - infLoi * 1.0e31;
+      const FloatT maxUpi = finUpi + infUpi * OneE31;
+      const FloatT maxDowni = finDowni - infLoi * OneE31;
       /*
   If LB(i) > rup(i) or UB(i) < rlo(i), we're infeasible. Break for the exit,
   unless the user has been so foolish as to tell us to ignore infeasibility,
@@ -517,8 +517,8 @@ const CoinPresolveAction *testRedundant(CoinPresolveMatrix *prob,
       }
       finUpi += 1.0e-8 * CoinAbs(finUpi);
       finDowni -= 1.0e-8 * CoinAbs(finDowni);
-      const FloatT maxUpi = finUpi + infUpi * 1.0e31;
-      const FloatT maxDowni = finDowni - infLoi * 1.0e31;
+      const FloatT maxUpi = finUpi + infUpi * OneE31;
+      const FloatT maxDowni = finDowni - infLoi * OneE31;
       /*
   If we have L(i) and U(i) at or inside the row bounds, we have a useless
   constraint.

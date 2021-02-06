@@ -845,7 +845,7 @@ void subst_constraint_action::postsolve(CoinPostsolveMatrix *prob) const
     const int *tgtrow_colndxs = NULL;
     const FloatT *tgtrow_coeffs = NULL;
     FloatT tgtcoeff = 0.0;
-    FloatT tgtrhs = 1.0e50;
+    FloatT tgtrhs = OneE50;
 
     int nel = 0;
     for (int cndx = 0; cndx < tgtcol_len; ++cndx) {

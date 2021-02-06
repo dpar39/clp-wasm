@@ -201,7 +201,7 @@ slack_FloatTton_action::presolve(CoinPresolveMatrix *prob,
   the existing bounds, update. Have a care with integer variables --- don't let
   numerical inaccuracy pull us off an integral bound.
 */
-    if (clo[j] < lo && lo > -1.0e100) {
+    if (clo[j] < lo && lo > -OneE100) {
       // If integer be careful
       if (integerType[j]) {
         if (CoinAbs(lo - floor(lo + 0.5)) < 0.000001)
@@ -212,7 +212,7 @@ slack_FloatTton_action::presolve(CoinPresolveMatrix *prob,
         clo[j] = lo;
       }
     }
-    if (cup[j] > up && up < 1.0e100) {
+    if (cup[j] > up && up < OneE100) {
       if (integerType[j]) {
         if (CoinAbs(up - floor(up + 0.5)) < 0.000001)
           up = floor(up + 0.5);
@@ -650,11 +650,11 @@ slack_singleton_action::presolve(CoinPresolveMatrix *prob,
         }
         if (integerType && integerType[iCol]) {
           // only possible if everything else integer
-          if (newLower > -1.0e30) {
+          if (newLower > -OneE30) {
             if (newLower != floor(newLower + 0.5))
               continue;
           }
-          if (newUpper < 1.0e30) {
+          if (newUpper < OneE30) {
             if (newUpper != floor(newUpper + 0.5))
               continue;
           }

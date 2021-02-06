@@ -477,14 +477,14 @@ const CoinPresolveAction
 	    if (kk==kre) {
 	      assert (value1);
 	      if (value1>1.0e-5) {
-		if (!neginf&&rup[iRow]<1.0e10)
+		if (!neginf&&rup[iRow]<OneE10)
 		  if (upperBound*value1>rup[iRow]-maxdown)
 		    upperBound = (rup[iRow]-maxdown)/value1;
-		if (!posinf&&rlo[iRow]>-1.0e10)
+		if (!posinf&&rlo[iRow]>-OneE10)
 		  if (lowerBound*value1<rlo[iRow]-maxup)
 		    lowerBound = (rlo[iRow]-maxup)/value1;
 	      } else if (value1<-1.0e-5) {
-		if (!neginf&&rup[iRow]<1.0e10)
+		if (!neginf&&rup[iRow]<OneE10)
 		  if (lowerBound*value1>rup[iRow]-maxdown) {
 #ifndef NDEBUG
 		    FloatT x=lowerBound;
@@ -492,7 +492,7 @@ const CoinPresolveAction
 		    lowerBound = (rup[iRow]-maxdown)/value1;
 		    assert (lowerBound == CoinMax(x,(rup[iRow]-maxdown)/value1));
 		  }
-		if (!posinf&&rlo[iRow]>-1.0e10)
+		if (!posinf&&rlo[iRow]>-OneE10)
 		  if (upperBound*value1<rlo[iRow]-maxup) {
 #ifndef NDEBUG
 		    FloatT x=upperBound;
@@ -550,18 +550,18 @@ const CoinPresolveAction
               maxup -= value * lo;
             }
             if (value > 1.0e-5) {
-              if (!neginf && rup[iRow] < 1.0e10)
+              if (!neginf && rup[iRow] < OneE10)
                 if (upperBound * value > rup[iRow] - maxdown)
                   upperBound = (rup[iRow] - maxdown) / value;
-              if (!posinf && rlo[iRow] > -1.0e10)
+              if (!posinf && rlo[iRow] > -OneE10)
                 if (lowerBound * value < rlo[iRow] - maxup)
                   lowerBound = (rlo[iRow] - maxup) / value;
             } else if (value < -1.0e-5) {
-              if (!neginf && rup[iRow] < 1.0e10)
+              if (!neginf && rup[iRow] < OneE10)
                 if (lowerBound * value > rup[iRow] - maxdown) {
                   lowerBound = (rup[iRow] - maxdown) / value;
                 }
-              if (!posinf && rlo[iRow] > -1.0e10)
+              if (!posinf && rlo[iRow] > -OneE10)
                 if (upperBound * value < rlo[iRow] - maxup) {
                   upperBound = (rlo[iRow] - maxup) / value;
                 }
@@ -896,8 +896,8 @@ const CoinPresolveAction
     for (int i = 0; i < ncols; i++) {
       if ((piece[i] & 0x80000000) == 0) {
         int number = 1;
-        FloatT lo = CoinMax(clo[i], -1.0e100);
-        FloatT up = CoinMin(cup[i], 1.0e100);
+        FloatT lo = CoinMax(clo[i], -OneE100);
+        FloatT up = CoinMin(cup[i], OneE100);
         // get first
         FloatT value = colels[mcstrt[i]];
         int iNext = piece[i];
@@ -905,11 +905,11 @@ const CoinPresolveAction
         while (iNext != i) {
           number++;
           if (value == colels[mcstrt[iNext]]) {
-            lo += CoinMax(clo[iNext], -1.0e100);
-            up += CoinMin(cup[iNext], 1.0e100);
+            lo += CoinMax(clo[iNext], -OneE100);
+            up += CoinMin(cup[iNext], OneE100);
           } else {
-            lo -= CoinMin(cup[iNext], 1.0e100);
-            up -= CoinMax(clo[iNext], -1.0e100);
+            lo -= CoinMin(cup[iNext], OneE100);
+            up -= CoinMax(clo[iNext], -OneE100);
           }
           clo[iNext] = 0.0;
           cup[iNext] = 0.0;
@@ -917,9 +917,9 @@ const CoinPresolveAction
           piece[iNext] |= 0x80000000;
           iNext = piece[iNext] & 0x7fffffff;
         }
-        if (lo < -1.0e50)
+        if (lo < -OneE50)
           lo = -COIN_DBL_MAX;
-        if (up > 1.0e50)
+        if (up > OneE50)
           up = COIN_DBL_MAX;
         if (lo == -COIN_DBL_MAX && up == COIN_DBL_MAX) {
           printf("Help - free variable %d\n", i);
@@ -1984,8 +1984,8 @@ const CoinPresolveAction
       FloatT element0 = colels[start];
       FloatT rowUpper0 = rup[row0];
       bool swapSigns0 = false;
-      if (rlo[row0] > -1.0e30) {
-        if (rup[row0] > 1.0e30) {
+      if (rlo[row0] > -OneE30) {
+        if (rup[row0] > OneE30) {
           swapSigns0 = true;
           rowUpper0 = -rlo[row0];
           element0 = -element0;
@@ -1993,7 +1993,7 @@ const CoinPresolveAction
           // range or equality
           continue;
         }
-      } else if (rup[row0] > 1.0e30) {
+      } else if (rup[row0] > OneE30) {
         // free
         continue;
       }
@@ -2013,8 +2013,8 @@ const CoinPresolveAction
       FloatT element1 = colels[start + 1];
       FloatT rowUpper1 = rup[row1];
       bool swapSigns1 = false;
-      if (rlo[row1] > -1.0e30) {
-        if (rup[row1] > 1.0e30) {
+      if (rlo[row1] > -OneE30) {
+        if (rup[row1] > OneE30) {
           swapSigns1 = true;
           rowUpper1 = -rlo[row1];
           element1 = -element1;
@@ -2022,7 +2022,7 @@ const CoinPresolveAction
           // range or equality
           continue;
         }
-      } else if (rup[row1] > 1.0e30) {
+      } else if (rup[row1] > OneE30) {
         // free
         continue;
       }
@@ -2074,7 +2074,7 @@ const CoinPresolveAction
           FloatT sum0 = 0.0;
           FloatT sum1 = 0.0;
           FloatT value = bound[k];
-          if (CoinAbs(value) < 1.0e30) {
+          if (CoinAbs(value) < OneE30) {
             sum0 += alpha[0] * value;
             sum1 += alpha[1] * value;
           } else {
@@ -2155,12 +2155,12 @@ const CoinPresolveAction
           }
           // if costed may be able to adjust
           if (cost[icol] >= 0.0) {
-            if (highestLowest < upperX && highestLowest >= lowerX && highestHighest < 1.0e30) {
+            if (highestLowest < upperX && highestLowest >= lowerX && highestHighest < OneE30) {
               highestHighest = CoinMin(highestHighest, highestLowest);
             }
           }
           if (cost[icol] <= 0.0) {
-            if (lowestHighest > lowerX && lowestHighest <= upperX && lowestHighest > -1.0e30) {
+            if (lowestHighest > lowerX && lowestHighest <= upperX && lowestHighest > -OneE30) {
               lowestLowest = CoinMax(lowestLowest, lowestHighest);
             }
           }
@@ -2378,14 +2378,14 @@ void twoxtwo_action::postsolve(CoinPostsolveMatrix *prob) const
     els1real[1] = els1[1];
     // make <= rows
     FloatT rowUpper0 = rup[row0];
-    if (rlo[row0] > -1.0e30) {
+    if (rlo[row0] > -OneE30) {
       rowUpper0 = -rlo[row0];
       els0[0] = -els0[0];
       els0[1] = -els0[1];
     }
     FloatT rowUpper1 = rup[row1];
     bool swapSigns1 = false;
-    if (rlo[row1] > -1.0e30) {
+    if (rlo[row1] > -OneE30) {
       swapSigns1 = true;
       rowUpper1 = -rlo[row1];
       els1[0] = -els1[0];
@@ -2395,7 +2395,7 @@ void twoxtwo_action::postsolve(CoinPostsolveMatrix *prob) const
     FloatT valueOther = sol[otherCol];
     FloatT value;
     // first see if at bound is OK
-    bool lowerBoundPossible = clo[icol] > -1.0e30;
+    bool lowerBoundPossible = clo[icol] > -OneE30;
     value = clo[icol];
     if (lowerBoundPossible) {
       FloatT value0 = els0[0] * valueOther + els0[1] * value;
@@ -2405,7 +2405,7 @@ void twoxtwo_action::postsolve(CoinPostsolveMatrix *prob) const
       if (value1 > rowUpper1 + tolerance)
         lowerBoundPossible = false;
     }
-    bool upperBoundPossible = cup[icol] < 1.0e30;
+    bool upperBoundPossible = cup[icol] < OneE30;
     value = cup[icol];
     if (upperBoundPossible) {
       FloatT value0 = els0[0] * valueOther + els0[1] * value;

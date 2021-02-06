@@ -450,14 +450,14 @@ const CoinPresolveAction *tripleton_action::presolve(CoinPresolveMatrix *prob,
 #endif
         }
         FloatT rhsRatio = rhs / coeffy;
-        if (clo[icoly] > -1.0e30) {
-          if (clo[icolx] < -1.0e30 || clo[icolz] < -1.0e30)
+        if (clo[icoly] > -OneE30) {
+          if (clo[icolx] < -OneE30 || clo[icolz] < -OneE30)
             continue;
           if (cx * clo[icolx] + cz * clo[icolz] + rhsRatio < clo[icoly] - ztolzb)
             continue;
         }
-        if (cup[icoly] < 1.0e30) {
-          if (cup[icolx] > 1.0e30 || cup[icolz] > 1.0e30)
+        if (cup[icoly] < OneE30) {
+          if (cup[icolx] > OneE30 || cup[icolz] > OneE30)
             continue;
           if (cx * cup[icolx] + cz * cup[icolz] + rhsRatio > cup[icoly] + ztolzb)
             continue;

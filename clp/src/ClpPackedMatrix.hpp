@@ -3,8 +3,7 @@
 // Corporation and others.  All Rights Reserved.
 // This code is licensed under the terms of the Eclipse Public License (EPL).
 
-#ifndef ClpPackedMatrix_H
-#define ClpPackedMatrix_H
+#pragma once
 
 #include "CoinPragma.hpp"
 
@@ -705,74 +704,75 @@ protected:
   int ifActive_;
   //@}
 };
-#elif INCLUDE_MATRIX3_PRICING
-int iColumn = *column;
-column++;
-if (CoinAbs(value) > zeroTolerance) {
-  FloatT thisWeight = weights[iColumn];
-  FloatT pivot = value * scaleFactor;
-  FloatT pivotSquared = pivot * pivot;
-  thisWeight += pivotSquared * devex + pivot * modification;
-  if (thisWeight < DEVEX_TRY_NORM) {
-    if (referenceIn < 0.0) {
-      // steepest
-      thisWeight = CoinMax(DEVEX_TRY_NORM, DEVEX_ADD_ONE + pivotSquared);
-    } else {
-      // exact
-      thisWeight = referenceIn * pivotSquared;
-      if (reference(iColumn))
-        thisWeight += 1.0;
-      thisWeight = CoinMax(thisWeight, DEVEX_TRY_NORM);
-    }
-  }
-  // out basic or fixed
-  weights[iColumn] = thisWeight;
-  value = reducedCost[iColumn] - value;
-  reducedCost[iColumn] = value;
-  unsigned char thisStatus = status[iColumn] & 7;
-  assert(thisStatus != 0 && thisStatus != 4);
-  if (thisStatus == 3) {
-    //} else if ((thisStatus&1)!=0) {
-    // basic or fixed
-    //value=0.0;
-  } else {
-    assert(thisStatus == 2);
-    value = -value;
-  }
-  if (value < dualTolerance) {
-    value *= value;
-    if (value > bestRatio * weights[iColumn]) {
-      bestSequence = iColumn;
-      bestRatio = value / weights[iColumn];
-#if NO_CHANGE_MULTIPLIER != 1
-      bestRatio2 = bestRatio * NO_CHANGE_MULTIPLIER;
-#endif
-    }
-  }
-} else {
-  // interesting - was faster without this?!
-  value = reducedCost[iColumn];
-  unsigned char thisStatus = status[iColumn] & 7;
-  assert(thisStatus != 0 && thisStatus != 4);
-  if (thisStatus == 3) {
-  } else if ((thisStatus & 1) != 0) {
-    // basic or fixed
-    value = 0.0;
-  } else {
-    value = -value;
-  }
-  if (value < dualTolerance) {
-    value *= value;
-    if (value > bestRatio2 * weights[iColumn]) {
-      bestSequence = iColumn;
-      bestRatio2 = value / weights[iColumn];
-#if NO_CHANGE_MULTIPLIER != 1
-      bestRatio = bestRatio2 * INVERSE_MULTIPLIER;
-#endif
-    }
-  }
-}
-#endif
+
+// #if INCLUDE_MATRIX3_PRICING
+// int iColumn = *column;
+// column++;
+// if (CoinAbs(value) > zeroTolerance) {
+//   FloatT thisWeight = weights[iColumn];
+//   FloatT pivot = value * scaleFactor;
+//   FloatT pivotSquared = pivot * pivot;
+//   thisWeight += pivotSquared * devex + pivot * modification;
+//   if (thisWeight < DEVEX_TRY_NORM) {
+//     if (referenceIn < 0.0) {
+//       // steepest
+//       thisWeight = CoinMax(DEVEX_TRY_NORM, DEVEX_ADD_ONE + pivotSquared);
+//     } else {
+//       // exact
+//       thisWeight = referenceIn * pivotSquared;
+//       if (reference(iColumn))
+//         thisWeight += 1.0;
+//       thisWeight = CoinMax(thisWeight, DEVEX_TRY_NORM);
+//     }
+//   }
+//   // out basic or fixed
+//   weights[iColumn] = thisWeight;
+//   value = reducedCost[iColumn] - value;
+//   reducedCost[iColumn] = value;
+//   unsigned char thisStatus = status[iColumn] & 7;
+//   assert(thisStatus != 0 && thisStatus != 4);
+//   if (thisStatus == 3) {
+//     //} else if ((thisStatus&1)!=0) {
+//     // basic or fixed
+//     //value=0.0;
+//   } else {
+//     assert(thisStatus == 2);
+//     value = -value;
+//   }
+//   if (value < dualTolerance) {
+//     value *= value;
+//     if (value > bestRatio * weights[iColumn]) {
+//       bestSequence = iColumn;
+//       bestRatio = value / weights[iColumn];
+// #if NO_CHANGE_MULTIPLIER != 1
+//       bestRatio2 = bestRatio * NO_CHANGE_MULTIPLIER;
+// #endif
+//     }
+//   }
+// } else {
+//   // interesting - was faster without this?!
+//   value = reducedCost[iColumn];
+//   unsigned char thisStatus = status[iColumn] & 7;
+//   assert(thisStatus != 0 && thisStatus != 4);
+//   if (thisStatus == 3) {
+//   } else if ((thisStatus & 1) != 0) {
+//     // basic or fixed
+//     value = 0.0;
+//   } else {
+//     value = -value;
+//   }
+//   if (value < dualTolerance) {
+//     value *= value;
+//     if (value > bestRatio2 * weights[iColumn]) {
+//       bestSequence = iColumn;
+//       bestRatio2 = value / weights[iColumn];
+// #if NO_CHANGE_MULTIPLIER != 1
+//       bestRatio = bestRatio2 * INVERSE_MULTIPLIER;
+// #endif
+//     }
+//   }
+// }
+//#endif
 
 /* vi: softtabstop=2 shiftwidth=2 expandtab tabstop=2
 */

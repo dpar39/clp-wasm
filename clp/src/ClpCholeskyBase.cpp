@@ -3022,7 +3022,7 @@ int ClpCholeskyBase::factorize(const CoinWorkDouble *diagonal, int *rowsDropped)
               value = 1.0 / value;
               largest = CoinMax(largest, CoinAbs(value));
             } else {
-              value = 1.0e100;
+              value = OneE100;
             }
             diagonal_[iRow] = -value;
             int kRow = permuteInverse_[iOriginalRow + numberRowsModel];
@@ -3101,7 +3101,7 @@ int ClpCholeskyBase::factorize(const CoinWorkDouble *diagonal, int *rowsDropped)
               value = 1.0 / value;
               largest = CoinMax(largest, CoinAbs(value));
             } else {
-              value = 1.0e100;
+              value = OneE100;
             }
             diagonal_[iRow] = -value;
             int kRow = permuteInverse_[iOriginalRow + numberRowsModel];
@@ -3202,7 +3202,7 @@ int ClpCholeskyBase::factorize(const CoinWorkDouble *diagonal, int *rowsDropped)
               work[jRow] = 0.0;
             }
           } else {
-            value = 1.0e100;
+            value = OneE100;
             diagonal_[iColumn] = -value;
             for (j = 0; j < number; j++) {
               int jRow = which[j];
@@ -3220,7 +3220,7 @@ int ClpCholeskyBase::factorize(const CoinWorkDouble *diagonal, int *rowsDropped)
           value = 1.0 / value;
           largest = CoinMax(largest, CoinAbs(value));
         } else {
-          value = 1.0e100;
+          value = OneE100;
         }
         diagonal_[iColumn] = -value;
         work[iColumn - numberColumns + numberTotal] = -1.0;
@@ -3387,7 +3387,7 @@ void ClpCholeskyBase::factorizePart2(int *rowsDropped)
             diagonalValue = 1.0 / diagonalValue;
           } else {
             rowsDropped[originalRow] = 2;
-            d[jRow] = -1.0e100;
+            d[jRow] = -OneE100;
             diagonalValue = 0.0;
             integerParameters_[20]++;
           }
@@ -3400,7 +3400,7 @@ void ClpCholeskyBase::factorizePart2(int *rowsDropped)
             diagonalValue = 1.0 / diagonalValue;
           } else {
             rowsDropped[originalRow] = 2;
-            d[jRow] = 1.0e100;
+            d[jRow] = OneE100;
             diagonalValue = 0.0;
             integerParameters_[20]++;
           }
@@ -3514,7 +3514,7 @@ void ClpCholeskyBase::factorizePart2(int *rowsDropped)
           diagonalValue = 1.0 / diagonalValue;
         } else {
           rowsDropped[originalRow] = 2;
-          d[iRow] = -1.0e100;
+          d[iRow] = -OneE100;
           diagonalValue = 0.0;
           integerParameters_[20]++;
         }
@@ -3527,7 +3527,7 @@ void ClpCholeskyBase::factorizePart2(int *rowsDropped)
           diagonalValue = 1.0 / diagonalValue;
         } else {
           rowsDropped[originalRow] = 2;
-          d[iRow] = 1.0e100;
+          d[iRow] = OneE100;
           diagonalValue = 0.0;
           integerParameters_[20]++;
         }

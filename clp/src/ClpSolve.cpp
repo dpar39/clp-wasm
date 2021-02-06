@@ -277,16 +277,16 @@ solveWithVolume(ClpSimplex *model, int numberPasses, int doIdiot)
       sense[i], rhs[i], range);
     switch (sense[i]) {
     case 'E':
-      volprob.dual_lb[i] = -1.0e31;
-      volprob.dual_ub[i] = 1.0e31;
+      volprob.dual_lb[i] = -OneE31;
+      volprob.dual_ub[i] = OneE31;
       break;
     case 'L':
-      volprob.dual_lb[i] = -1.0e31;
+      volprob.dual_lb[i] = -OneE31;
       volprob.dual_ub[i] = 0.0;
       break;
     case 'G':
       volprob.dual_lb[i] = 0.0;
-      volprob.dual_ub[i] = 1.0e31;
+      volprob.dual_ub[i] = OneE31;
       break;
     default:
       printf("Volume Algorithm can't work if there is a non ELG row\n");
@@ -1577,7 +1577,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
         FloatT smallestObj = COIN_DBL_MAX;
         FloatT largestObj = 0.0;
         for (iColumn = 0; iColumn < numberColumns; iColumn++) {
-          if (columnLower[iColumn] < -1.0e10 && columnUpper[iColumn] > 1.0e10) {
+          if (columnLower[iColumn] < -OneE10 && columnUpper[iColumn] > OneE10) {
             nFree++;
           } else if (objective[iColumn]) {
             nObj++;
@@ -1595,13 +1595,13 @@ int ClpSimplex::initialSolve(ClpSolve &options)
         // look at rhs
         int iRow;
         FloatT largest = 0.0;
-        FloatT smallest = 1.0e30;
+        FloatT smallest = OneE30;
         FloatT largestGap = 0.0;
         int numberNotE = 0;
         bool notInteger = false;
         for (iRow = 0; iRow < numberRows; iRow++) {
           FloatT value1 = model2->rowLower_[iRow];
-          if (value1 && value1 > -1.0e31) {
+          if (value1 && value1 > -OneE31) {
             largest = CoinMax(largest, CoinAbs(value1));
             smallest = CoinMin(smallest, CoinAbs(value1));
             if (CoinAbs(value1 - floor(value1 + 0.5)) > 1.0e-8) {
@@ -1610,7 +1610,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
             }
           }
           FloatT value2 = model2->rowUpper_[iRow];
-          if (value2 && value2 < 1.0e31) {
+          if (value2 && value2 < OneE31) {
             largest = CoinMax(largest, CoinAbs(value2));
             smallest = CoinMin(smallest, CoinAbs(value2));
             if (CoinAbs(value2 - floor(value2 + 0.5)) > 1.0e-8) {
@@ -1621,7 +1621,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
           // CHECKME This next bit can't be right...
           if (value2 > value1) {
             numberNotE++;
-            //if (value2 > 1.0e31 || value1 < -1.0e31)
+            //if (value2 > OneE31 || value1 < -OneE31)
             //   largestGap = COIN_DBL_MAX;
             //else
             //   largestGap = value2 - value1;
@@ -1795,15 +1795,15 @@ int ClpSimplex::initialSolve(ClpSolve &options)
       // look at rhs
       int iRow;
       FloatT largest = 0.0;
-      FloatT smallest = 1.0e30;
+      FloatT smallest = OneE30;
       for (iRow = 0; iRow < numberRows; iRow++) {
         FloatT value1 = model2->rowLower_[iRow];
-        if (value1 && value1 > -1.0e31) {
+        if (value1 && value1 > -OneE31) {
           largest = CoinMax(largest, CoinAbs(value1));
           smallest = CoinMin(smallest, CoinAbs(value1));
         }
         FloatT value2 = model2->rowUpper_[iRow];
-        if (value2 && value2 < 1.0e31) {
+        if (value2 && value2 < OneE31) {
           largest = CoinMax(largest, CoinAbs(value2));
           smallest = CoinMin(smallest, CoinAbs(value2));
         }
@@ -1973,23 +1973,23 @@ int ClpSimplex::initialSolve(ClpSolve &options)
       // look at rhs
       int iRow;
       FloatT largest = 0.0;
-      FloatT smallest = 1.0e30;
+      FloatT smallest = OneE30;
       FloatT largestGap = 0.0;
       int numberNotE = 0;
       for (iRow = 0; iRow < numberRows; iRow++) {
         FloatT value1 = model2->rowLower_[iRow];
-        if (value1 && value1 > -1.0e31) {
+        if (value1 && value1 > -OneE31) {
           largest = CoinMax(largest, CoinAbs(value1));
           smallest = CoinMin(smallest, CoinAbs(value1));
         }
         FloatT value2 = model2->rowUpper_[iRow];
-        if (value2 && value2 < 1.0e31) {
+        if (value2 && value2 < OneE31) {
           largest = CoinMax(largest, CoinAbs(value2));
           smallest = CoinMin(smallest, CoinAbs(value2));
         }
         if (value2 > value1) {
           numberNotE++;
-          if (value2 > 1.0e31 || value1 < -1.0e31)
+          if (value2 > OneE31 || value1 < -OneE31)
             largestGap = COIN_DBL_MAX;
           else
             largestGap = value2 - value1;
@@ -2513,7 +2513,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
     CoinZeroN(rowSolution, numberRows);
     model2->clpMatrix()->times(1.0, columnSolution, rowSolution);
     // See if we can adjust using costed slacks
-    FloatT penalty = CoinMax(fd(1.0e5), CoinMin(infeasibilityCost_ * 0.01, 1.0e10)) * optimizationDirection_;
+    FloatT penalty = CoinMax(fd(1.0e5), CoinMin(infeasibilityCost_ * 0.01, OneE10)) * optimizationDirection_;
     const FloatT *lower = model2->rowLower();
     const FloatT *upper = model2->rowUpper();
     for (iRow = 0; iRow < numberRows; iRow++) {
@@ -2654,16 +2654,16 @@ int ClpSimplex::initialSolve(ClpSolve &options)
     delete[] addCost;
     // look at rhs to see if to perturb
     FloatT largest = 0.0;
-    FloatT smallest = 1.0e30;
+    FloatT smallest = OneE30;
     for (iRow = 0; iRow < numberRows; iRow++) {
       FloatT value;
       value = CoinAbs(model2->rowLower_[iRow]);
-      if (value && value < 1.0e30) {
+      if (value && value < OneE30) {
         largest = CoinMax(largest, value);
         smallest = CoinMin(smallest, value);
       }
       value = CoinAbs(model2->rowUpper_[iRow]);
-      if (value && value < 1.0e30) {
+      if (value && value < OneE30) {
         largest = CoinMax(largest, value);
         smallest = CoinMin(smallest, value);
       }
@@ -2740,7 +2740,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
     // put in free
     // maybe a solution there already
     for (iColumn = 0; iColumn < originalNumberColumns; iColumn++) {
-      if (model2->getColumnStatus(iColumn) == basic || (columnLower[iColumn] < -1.0e30 && columnUpper[iColumn] > 1.0e30))
+      if (model2->getColumnStatus(iColumn) == basic || (columnLower[iColumn] < -OneE30 && columnUpper[iColumn] > OneE30))
         sort[numberSort++] = iColumn;
     }
     for (iColumn = 0; iColumn < originalNumberColumns; iColumn++) {
@@ -2755,7 +2755,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
     FloatT *fullSolution = model2->primalColumnSolution();
 
     int iPass;
-    FloatT lastObjective[] = { 1.0e31, 1.0e31 };
+    FloatT lastObjective[] = { OneE31, OneE31 };
     // It will be safe to allow dense
     model2->setInitialDenseFactorization(true);
 
@@ -2810,9 +2810,9 @@ int ClpSimplex::initialSolve(ClpSolve &options)
       FloatT *lower = small.rowLower();
       FloatT *upper = small.rowUpper();
       for (iRow = 0; iRow < numberRows; iRow++) {
-        if (lower[iRow] > -1.0e50)
+        if (lower[iRow] > -OneE50)
           lower[iRow] -= sumFixed[iRow];
-        if (upper[iRow] < 1.0e50)
+        if (upper[iRow] < OneE50)
           upper[iRow] -= sumFixed[iRow];
         rowSolution[iRow] -= sumFixed[iRow];
       }
@@ -2964,7 +2964,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
       if (sumArtificials && iPass > 5 && sumArtificials >= lastSumArtificials) {
         // increase costs
         FloatT *cost = model2->objective() + originalNumberColumns;
-        FloatT newCost = CoinMin(1.0e10, cost[0] * 1.5);
+        FloatT newCost = CoinMin(OneE10, cost[0] * 1.5);
         for (i = 0; i < numberArtificials; i++)
           cost[i] = newCost;
       }
@@ -3014,7 +3014,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
         else
           tolerance = 10.0 * averageNegDj;
         if (emergencyMode)
-          tolerance = 1.0e100;
+          tolerance = OneE100;
         int saveN = numberSort;
         for (iColumn = 0; iColumn < numberColumns; iColumn++) {
           FloatT dj = djs[iColumn] * optimizationDirection_;
@@ -3027,7 +3027,7 @@ int ClpSimplex::initialSolve(ClpSolve &options)
             else if (columnUpper[iColumn] > columnLower[iColumn])
               dj = CoinAbs(dj);
             else
-              dj = 1.0e50;
+              dj = OneE50;
             if (dj < tolerance) {
               weight[numberSort] = dj;
               sort[numberSort++] = iColumn;
@@ -5271,11 +5271,11 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
     const FloatT *upper = master.rowUpper();
     int kCol = 0;
     for (int iRow = 0; iRow < numberMasterRows; iRow++) {
-      if (lower[iRow] > -1.0e10) {
+      if (lower[iRow] > -OneE10) {
         rowAdd[kCol] = iRow;
         elementAdd[kCol++] = 1.0;
       }
-      if (upper[iRow] < 1.0e10) {
+      if (upper[iRow] < OneE10) {
         rowAdd[kCol] = iRow;
         elementAdd[kCol++] = -1.0;
       }
@@ -5289,7 +5289,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
     }
     for (int i = 0; i < kCol; i++) {
       columnAdd[i] = i;
-      objective[i] = 1.0e13;
+      objective[i] = OneE13;
     }
     columnAdd[kCol] = kCol;
     master.addColumns(kCol, NULL, NULL, objective,
@@ -5300,7 +5300,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
   if (maxPass < 2)
     maxPass = 100;
   int iPass;
-  FloatT lastObjective = 1.0e31;
+  FloatT lastObjective = OneE31;
   // Create convexity rows for proposals
   int numberMasterColumns = master.numberColumns();
   master.resize(numberMasterRows + numberBlocks, numberMasterColumns);
@@ -5330,7 +5330,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
       rowUpper[iRow] = 1.0;
       rowAdd[iBlock] = iRow;
       elementAdd[iBlock] = 1.0;
-      objective[iBlock] = 1.0e13;
+      objective[iBlock] = OneE13;
       columnAdd[iBlock + 1] = iBlock + 1;
       when[iBlock] = -1;
       whichBlock[iBlock] = iBlock;
@@ -5459,8 +5459,8 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
         FloatT *lower = master.columnLower();
         FloatT *upper = master.columnUpper();
         for (int i = 0; i < numberColumns; i++) {
-          lower[i] = CoinMax(lower[i], -1.0e10);
-          upper[i] = CoinMin(upper[i], 1.0e10);
+          lower[i] = CoinMax(lower[i], -OneE10);
+          upper[i] = CoinMin(upper[i], OneE10);
         }
 #ifdef ABC_INHERIT
         master.dealWithAbc(1, 1, true);
@@ -5623,7 +5623,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
           FloatT dj = objValue;
           if (problemStatus)
             dj = 0.0;
-          FloatT smallest = 1.0e100;
+          FloatT smallest = OneE100;
           FloatT largest = 0.0;
           for (i = 0; i < numberMasterRows; i++) {
             FloatT value = elementAdd[start + i];
@@ -5662,7 +5662,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
           // See if good dj and pack down
           CoinBigIndex number = start;
           FloatT dj = objValue;
-          FloatT smallest = 1.0e100;
+          FloatT smallest = OneE100;
           FloatT largest = 0.0;
           for (i = 0; i < numberMasterRows; i++) {
             FloatT value = elementAdd[start + i];
@@ -5795,7 +5795,7 @@ int ClpSimplex::solveDW(CoinStructuredModel *model, ClpSolve &options)
   for (int iColumn = 0; iColumn < numberColumns; iColumn++) {
     if (fullSolution[iColumn] < fullUpper[iColumn] - 1.0e-8 && fullSolution[iColumn] > fullLower[iColumn] + 1.0e-8) {
       if (getStatus(iColumn) != ClpSimplex::basic) {
-        if (columnLower_[iColumn] > -1.0e30 || columnUpper_[iColumn] < 1.0e30)
+        if (columnLower_[iColumn] > -OneE30 || columnUpper_[iColumn] < OneE30)
           setStatus(iColumn, ClpSimplex::superBasic);
         else
           setStatus(iColumn, ClpSimplex::isFree);
@@ -6360,7 +6360,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
   if (maxPass < 2)
     maxPass = 100;
   int iPass;
-  FloatT lastObjective = -1.0e31;
+  FloatT lastObjective = -OneE31;
   // Create columns for proposals
   int numberMasterRows = masterModel.numberRows();
   //masterModel.resize(numberMasterColumns + numberBlocks, numberMasterRows);
@@ -6506,7 +6506,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
           // ? need trust region ?
           lower[i + numberMasterColumns] = -COIN_DBL_MAX;
 #if 0 //1 //ndef UNBOUNDED
-		lower[i+numberMasterColumns]=-1.0e10;
+		lower[i+numberMasterColumns]=-OneE10
 #endif
           //if (problemState[i]!=2) {
           numberFreed++;
@@ -6515,7 +6515,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
         }
       }
       if (numberFreed)
-        lastObjective = -1.0e31;
+        lastObjective = -OneE31;
     }
 #ifdef TRY_NO_SCALING
     masterModel.scaling(0);
@@ -6718,7 +6718,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
 	       } else {
 		 // treat as feasible
 		 if (scaleFactor)
-		   scaleFactor = 1.0e10/sqrt(scaleFactor);
+		   scaleFactor = OneE10 / sqrt(scaleFactor);
 		 for (int i=0;i<numberMasterColumns;i++) {
 		   primal[i] = primal[i]*scaleFactor+primal2[i];
 		 }
@@ -6750,12 +6750,12 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
         FloatT value = primal[i];
         if (!columnLength[i]) {
           if (obj[i] < 0.0)
-            value += 1.0e10;
+            value += OneE10
           else if (obj[i] > 0.0)
-            value -= 1.0e10;
+            value -= OneE10
         }
         // make sure feasible
-        primal[i] = CoinMax(-1.0e10, CoinMin(1.0e10, value));
+        primal[i] = CoinMax(-OneE10, CoinMin(OneE10, value));
         primal[i] = CoinMax(lower[i], CoinMin(upper[i], primal[i]));
       }
     }
@@ -6819,9 +6819,9 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
       first[iBlock]->times(primal, rhs);
       for (int i = 0; i < numberRows2; i++) {
         FloatT value = rhs[i];
-        if (lower2[i] > -1.0e30)
+        if (lower2[i] > -OneE30)
           lower2[i] -= value;
-        if (upper2[i] < 1.0e30)
+        if (upper2[i] < OneE30)
           upper2[i] -= value;
       }
       bool canSkip = false;
@@ -7114,11 +7114,11 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
           for (int i = 0; i < numberRows2; i++) {
             if (solution[i] < -dualTolerance_) {
               // at upper
-              assert(saveUpper[i] < 1.0e30);
+              assert(saveUpper[i] < OneE30);
               objValue += solution[i] * upper2[i];
             } else if (solution[i] > dualTolerance_) {
               // at lower
-              assert(saveLower[i] > -1.0e30);
+              assert(saveLower[i] > -OneE30);
               objValue += solution[i] * lower2[i];
             }
           }
@@ -7191,7 +7191,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
             // See if cuts off and pack down
             int number = start;
             FloatT infeas = -objValue;
-            FloatT smallest = 1.0e100;
+            FloatT smallest = OneE100;
             FloatT largest = 0.0;
             for (int i = 0; i < numberMasterColumns; i++) {
               FloatT value = elementAdd[start + i];
@@ -7322,7 +7322,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
                     boundValue = columnLower[i];
                   else
                     boundValue = columnUpper[i];
-                  if (CoinAbs(boundValue) > 1.0e12 && CoinAbs(value) < 1.0e-8) {
+                  if (CoinAbs(boundValue) > OneE12 && CoinAbs(value) < 1.0e-8) {
                     boundValue = 0.0;
                     value = 0.0;
                   }
@@ -7396,7 +7396,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
                 ySum += rowLower[i] * s_c_l;
                 ySum -= rowUpper[i] * s_c_u;
                 effectiveRhs[i] = rhsValue;
-                if (CoinAbs(effectiveRhs[i]) > 1.0e10)
+                if (CoinAbs(effectiveRhs[i]) > OneE10)
                   printf("Large rhs row %d %g\n",
                     i, (double)effectiveRhs[i]);
               }
@@ -7404,7 +7404,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
               FloatT bSum = 0.0;
               for (int i = 0; i < numberRows; i++) {
                 bSum += effectiveRhs[i] * ray[i];
-                if (CoinAbs(effectiveRhs[i]) > 1.0e10)
+                if (CoinAbs(effectiveRhs[i]) > OneE10)
                   printf("Large rhs row %d %g after\n",
                     i, (double)effectiveRhs[i]);
               }
@@ -7558,14 +7558,14 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
                 for (int i = 0; i < numberRows2; i++) {
                   if (solution[i] < -dualTolerance_) {
                     // at upper
-                    assert(upper[i] < 1.0e30);
+                    assert(upper[i] < OneE30);
                     if (i < sub[iBlock].numberRows())
                       objValue7 += solution[i] * saveUpper[i];
                     else
                       objValue7 += solution[i] * upper[i];
                   } else if (solution[i] > dualTolerance_) {
                     // at lower
-                    assert(lower[i] > -1.0e30);
+                    assert(lower[i] > -OneE30);
                     if (i < sub[iBlock].numberRows())
                       objValue7 += solution[i] * saveLower[i];
                     else
@@ -7602,7 +7602,7 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
             //printf("Changing objValue from %g to %g\n",objValue,trueOffset);
             //objValue=trueOffset;
             FloatT infeas = objValue;
-            FloatT smallest = 1.0e100;
+            FloatT smallest = OneE100;
             FloatT largest = 0.0;
             for (int i = 0; i < numberMasterColumns; i++) {
               FloatT value = -elementAdd[start + i];
@@ -7779,11 +7779,11 @@ int ClpSimplex::solveBenders(CoinStructuredModel *model, ClpSolve &options)
               for (int i = 0; i < numberRows2; i++) {
                 if (solution[i] < -dualTolerance_) {
                   // at upper
-                  assert(upper[i] < 1.0e30);
+                  assert(upper[i] < OneE30);
                   objValue += solution[i] * upper[i];
                 } else if (solution[i] > dualTolerance_) {
                   // at lower
-                  assert(lower[i] > -1.0e30);
+                  assert(lower[i] > -OneE30);
                   objValue += solution[i] * lower[i];
                 }
               }

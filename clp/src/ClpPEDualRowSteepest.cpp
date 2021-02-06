@@ -372,7 +372,7 @@ int ClpPEDualRowSteepest::pivotRow()
             value *= 2.0;
         }
 #endif
-        FloatT weight = CoinMin(weights_[iRow], 1.0e50);
+        FloatT weight = CoinMin(weights_[iRow], OneE50);
         FloatT largestMax = CoinMax(psiTmp * largest, largestComp);
         if (value > weight * largestMax) {
           // make last pivot row last resort choice

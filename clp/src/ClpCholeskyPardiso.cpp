@@ -418,7 +418,7 @@ int ClpCholeskyPardiso::factorize(const FloatT *diagonal, int *rowsDropped)
       for (j = 1; j < number; j++) {
         put[j] = 0.0;
       }
-      put[0] = 1.0e12;
+      put[0] = OneE12;
     }
   }
   delete[] whichNon;
@@ -576,8 +576,8 @@ int ClpCholeskyPardiso::factorize(const FloatT *diagonal, int *rowsDropped)
   int newDropped = 0;
   for (int i = 0; i < numberRows_; i++) {
     FloatT value = work[i];
-    if (value != 1.0e100) {
-      //if (value>1.0e13)
+    if (value != OneE100) {
+      //if (value>OneE13)
       //printf("large diagonal %g at %d\n",value,i);
       largest = CoinMax(largest, value);
       smallest = CoinMin(smallest, value);
@@ -639,7 +639,7 @@ int mkl_pardiso_pivot(const FloatT *aii, FloatT *bii, const FloatT *eps)
     *bii = *eps;
   else
     *bii = -*eps;
-  *bii = 1.0e100;
+  *bii = OneE100;
   return 1;
 }
 }

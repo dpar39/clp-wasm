@@ -221,7 +221,7 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
   ClpDataSave data = saveData();
   if (problemStatus_ == 10 && sumPrimalInfeasibilities_ == -123456789.0) {
     // large infeasibility cost wanted
-    infeasibilityCost_ = CoinMax(infeasibilityCost_, 1.0e13);
+    infeasibilityCost_ = CoinMax(infeasibilityCost_, OneE13);
   }
   matrix_->refresh(this); // make sure matrix okay
 
@@ -264,7 +264,7 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
   specialOptions_ |= 131072;
   if (!startup(ifValuesPass, startFinishOptions)) {
     // See if better to use all slack basis
-    if (nonLinearCost_->sumInfeasibilities() > 1.0e15) {
+    if (nonLinearCost_->sumInfeasibilities() > OneE15) {
       // If not all slack then make it
       int numberRowBasic = 0;
       for (int i = 0; i < numberRows_; i++) {
@@ -381,7 +381,7 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
           if (!numberPrimalInfeasibilities_)
             initialNegDjs = numberDualInfeasibilities_;
           // make sure weight won't be changed
-          if (infeasibilityCost_ == 1.0e10)
+          if (infeasibilityCost_ == OneE10)
             infeasibilityCost_ = 1.000001e10;
         }
       }
@@ -420,14 +420,14 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
           switch (getColumnStatus(iColumn)) {
 
           case basic:
-            dj = -1.0e50;
+            dj = -OneE50;
             numberBasic++;
             break;
           case atUpperBound:
             dj = -dj;
             break;
           case isFixed:
-            dj = 1.0e50;
+            dj = OneE50;
             numberFixed++;
             break;
           case atLowerBound:
@@ -440,7 +440,7 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
             dj = -100.0 * CoinAbs(dj);
             break;
           }
-          if (dj < -dualTolerance_ && dj > -1.0e50) {
+          if (dj < -dualTolerance_ && dj > -OneE50) {
             numberNegative++;
             sumNegative -= dj;
           }
@@ -515,7 +515,7 @@ int ClpSimplexPrimal::primal(int ifValuesPass, int startFinishOptions)
       if (hitMaximumIterations() || (ifValuesPass == 2 && firstFree_ < 0)) {
         problemStatus_ = 3;
         break;
-      } else if ((moreSpecialOptions_ & 524288) != 0 && !nonLinearCost_->numberInfeasibilities() && CoinAbs(dblParam_[ClpDualObjectiveLimit]) > 1.0e30) {
+      } else if ((moreSpecialOptions_ & 524288) != 0 && !nonLinearCost_->numberInfeasibilities() && CoinAbs(dblParam_[ClpDualObjectiveLimit]) > OneE30) {
         problemStatus_ = 3;
         secondaryStatus_ = 10;
         break;
@@ -1007,7 +1007,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
       reason2 = 1;
     if ((sumInfeasibility > 1.0e7 && sumInfeasibility > 100.0 * lastSumInfeasibility
           && factorization_->pivotTolerance() < 0.11)
-      || (largestPrimalError_ > 1.0e10 && largestDualError_ > 1.0e10))
+      || (largestPrimalError_ > OneE10 && largestDualError_ > OneE10))
       reason2 = 2;
     if (reason2) {
       problemStatus_ = tentativeStatus;
@@ -1130,7 +1130,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
     gutsOfSolution(NULL, NULL, ifValuesPass != 0);
     nonLinearCost_->checkInfeasibilities(primalTolerance_);
   }
-  if (nonLinearCost_->numberInfeasibilities() > 0 && !progress->initialWeight_ && !ifValuesPass && infeasibilityCost_ == 1.0e10) {
+  if (nonLinearCost_->numberInfeasibilities() > 0 && !progress->initialWeight_ && !ifValuesPass && infeasibilityCost_ == OneE10) {
     // first time infeasible - start up weight computation
     FloatT *oldDj = dj_;
     FloatT *oldCost = cost_;
@@ -1238,7 +1238,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
       gutsOfSolution(NULL, NULL, ifValuesPass != 0);
   }
   FloatT trueInfeasibility = nonLinearCost_->sumInfeasibilities();
-  if (!nonLinearCost_->numberInfeasibilities() && infeasibilityCost_ == 1.0e10 && !ifValuesPass && true) {
+  if (!nonLinearCost_->numberInfeasibilities() && infeasibilityCost_ == OneE10&& !ifValuesPass && true) {
     // relax if default
     infeasibilityCost_ = CoinMin(CoinMax(100.0 * sumDualInfeasibilities_, 1.0e8), fd(1.00000001e10));
     // reset looping criterion
@@ -1359,7 +1359,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
       nonLinearCost_->checkInfeasibilities(0.0);
       gutsOfSolution(NULL, NULL, ifValuesPass != 0);
 
-      //infeasibilityCost_ = 1.0e100;
+      //infeasibilityCost_ = OneE100;
       // put back original costs
       createRim(4);
       nonLinearCost_->checkInfeasibilities(primalTolerance_);
@@ -1373,7 +1373,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
 #ifndef MAX_INFEASIBILITY_COST
 #define MAX_INFEASIBILITY_COST 1.0e18
 #endif
-        infeasibilityCost_ = 1.0e30;
+        infeasibilityCost_ = OneE30;
         gutsOfSolution(NULL, NULL, ifValuesPass != 0 && firstFree_ >= 0);
         infeasibilityCost_ = CoinMax(saveWeight, saveOriginalWeight);
         if ((infeasibilityCost_ >= MAX_INFEASIBILITY_COST || numberDualInfeasibilities_ == 0) && perturbation_ == 101) {
@@ -1418,7 +1418,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
             nonLinearCost_->checkInfeasibilities(primalTolerance_);
             gutsOfSolution(NULL, NULL, ifValuesPass != 0);
             // so will exit
-            infeasibilityCost_ = 1.0e30;
+            infeasibilityCost_ = OneE30;
             // reset infeasibilities
             sumPrimalInfeasibilities_ = nonLinearCost_->sumInfeasibilities();
             ;
@@ -1439,7 +1439,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
                   largestCost = CoinMax(largestCost, CoinAbs(obj[i]));
                 }
               }
-              testValue = 1.0e12 * (largestCost + 1.0e-6);
+              testValue = OneE12 * (largestCost + 1.0e-6);
               if (numberDualInfeasibilities_) {
                 FloatT average = sumDualInfeasibilities_ / numberDualInfeasibilities_;
                 testValue = CoinMax(testValue, average);
@@ -1580,7 +1580,7 @@ void ClpSimplexPrimal::statusOfProblemInPrimal(int &lastCleaned, int type,
       if (nonLinearCost_->numberInfeasibilities()) {
         if (infeasibilityCost_ >= MAX_INFEASIBILITY_COST && perturbation_ == 101) {
           // back off weight
-          infeasibilityCost_ = 1.0e13;
+          infeasibilityCost_ = OneE13;
           // reset looping criterion
           progress->reset();
           unPerturb(); // stop any further perturbation
@@ -1780,7 +1780,7 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
   FloatT bestEverPivot = acceptablePivot;
   int lastPivotRow = -1;
   FloatT lastPivot = 0.0;
-  FloatT lastTheta = 1.0e50;
+  FloatT lastTheta = OneE50;
 
   // use spareArrays to put ones looked at in
   // First one is list of candidates
@@ -1824,9 +1824,9 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
   FloatT way = directionIn_;
   FloatT maximumMovement;
   if (way > 0.0)
-    maximumMovement = CoinMin(1.0e30, upperIn_ - valueIn_);
+    maximumMovement = CoinMin(OneE30, upperIn_ - valueIn_);
   else
-    maximumMovement = CoinMin(1.0e30, valueIn_ - lowerIn_);
+    maximumMovement = CoinMin(OneE30, valueIn_ - lowerIn_);
 
   FloatT averageTheta = nonLinearCost_->averageTheta();
   FloatT tentativeTheta = CoinMin(10.0 * averageTheta, maximumMovement);
@@ -1980,7 +1980,7 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
 
   //printf("%d remain out of %d\n",numberRemaining,number);
   int iTry = 0;
-#define MAXTRY 1000
+  constexpr auto MAX_TRY = 1000;
   if (numberRemaining && upperTheta < maximumMovement) {
     // First check if previously chosen one will work
     if (pivotOne >= 0 && 0) {
@@ -1993,11 +1993,11 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
       theta_ = oldValue / alpha;
       pivotRow_ = pivotOne;
       // Stop loop
-      iTry = MAXTRY;
+      iTry = MAX_TRY;
     }
 
     // first get ratio with tolerance
-    for (; iTry < MAXTRY; iTry++) {
+    for (; iTry < MAX_TRY; iTry++) {
 
       upperTheta = maximumMovement;
       int iBest = -1;
@@ -2116,7 +2116,7 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
     if (nonLinearCost_->numberInfeasibilities()) {
       // but infeasible??
       // move variable but don't pivot
-      tentativeTheta = 1.0e50;
+      tentativeTheta = OneE50;
       for (iIndex = 0; iIndex < number; iIndex++) {
         int iRow = which[iIndex];
         FloatT alpha = work[iIndex];
@@ -2147,7 +2147,7 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
           }
         }
       }
-      if (tentativeTheta < 1.0e10)
+      if (tentativeTheta < OneE10)
         valueOut_ = valueIn_ + way * tentativeTheta;
     }
   }
@@ -2162,12 +2162,11 @@ void ClpSimplexPrimal::primalRow(CoinIndexedVector *rowArray,
     valueOut_ = solution(sequenceOut_);
     lowerOut_ = lower_[sequenceOut_];
     upperOut_ = upper_[sequenceOut_];
-#define MINIMUMTHETA 1.0e-12
     // Movement should be minimum for anti-degeneracy - unless
     // fixed variable out
     FloatT minimumTheta;
     if (upperOut_ > lowerOut_)
-      minimumTheta = MINIMUMTHETA;
+      minimumTheta = 1.0e-12;
     else
       minimumTheta = 0.0;
     // But can't go infeasible
@@ -2563,7 +2562,7 @@ void ClpSimplexPrimal::perturb(int type)
     //printf("ratio number diff rhs %g (%d %d fixed), element ratio %g\n",((FloatT)number)/((FloatT) numberRows_),
     //   numberRows_,nFixed,elementRatio);
 #endif
-    if (number * 4 > numberRows_ || elementRatio > 1.0e12) {
+    if (number * 4 > numberRows_ || elementRatio > OneE12) {
       perturbation_ = 100;
       delete[] sort;
       return; // good enough
@@ -2734,7 +2733,7 @@ void ClpSimplexPrimal::perturb(int type)
 #if 0
                               if (iSequence >= numberColumns_) {
                                    // may not be at bound - but still perturb (unless free)
-                                   if (upperValue > 1.0e30 && lowerValue < -1.0e30)
+                                   if (upperValue > OneE30 && lowerValue < -OneE30)
                                         value = 0.0;
                                    else
                                         value = - value; // as -1.0 in matrix
@@ -3866,7 +3865,7 @@ int ClpSimplexPrimal::lexSolve()
           if (!numberPrimalInfeasibilities_)
             initialNegDjs = numberDualInfeasibilities_;
           // make sure weight won't be changed
-          if (infeasibilityCost_ == 1.0e10)
+          if (infeasibilityCost_ == OneE10)
             infeasibilityCost_ = 1.000001e10;
         }
       }
@@ -3905,14 +3904,14 @@ int ClpSimplexPrimal::lexSolve()
           switch (getColumnStatus(iColumn)) {
 
           case basic:
-            dj = -1.0e50;
+            dj = -OneE50;
             numberBasic++;
             break;
           case atUpperBound:
             dj = -dj;
             break;
           case isFixed:
-            dj = 1.0e50;
+            dj = OneE50;
             numberFixed++;
             break;
           case atLowerBound:
@@ -3925,7 +3924,7 @@ int ClpSimplexPrimal::lexSolve()
             dj = -100.0 * CoinAbs(dj);
             break;
           }
-          if (dj < -dualTolerance_ && dj > -1.0e50) {
+          if (dj < -dualTolerance_ && dj > -OneE50) {
             numberNegative++;
             sumNegative -= dj;
           }
@@ -3981,7 +3980,7 @@ int ClpSimplexPrimal::lexSolve()
                 numberDegen++;
               } else {
                 // fix
-                cost_[i] = 1.0e10; //upper_[i]=lower_[i];
+                cost_[i] = OneE10; //upper_[i]=lower_[i];
               }
             } else if (getStatus(i) == atUpperBound) {
               if (dj_[i] >= -dualTolerance_) {
@@ -3989,7 +3988,7 @@ int ClpSimplexPrimal::lexSolve()
                 numberDegen++;
               } else {
                 // fix
-                cost_[i] = -1.0e10; //lower_[i]=upper_[i];
+                cost_[i] = -OneE10; //lower_[i]=upper_[i];
               }
             } else if (getStatus(i) == basic) {
               cost_[i] = (numberTotal - i) + randomNumberGenerator_.randomDouble() * 0.5;

@@ -362,7 +362,7 @@ void CoinOslFactorization::postProcess(const int *sequence, int *pivotVariable)
     FloatT *dluval = factInfo_.xeeadr;
     int *mcstrt = factInfo_.xcsadr + lstart;
     if (ndo)
-      assert(dluval[mcstrt[ndo] + 1] < 1.0e50);
+      assert(dluval[mcstrt[ndo] + 1] < OneE50);
   }
 #endif
 }
@@ -402,7 +402,7 @@ int CoinOslFactorization::replaceColumn(CoinIndexedVector *regionSparse,
     FloatT *dluval = factInfo_.xeeadr;
     int *mcstrt = factInfo_.xcsadr + lstart;
     if (ndo)
-      assert(dluval[mcstrt[ndo] + 1] < 1.0e50);
+      assert(dluval[mcstrt[ndo] + 1] < OneE50);
   }
 #endif
   return returnCode;
@@ -420,7 +420,7 @@ int CoinOslFactorization::updateColumn(CoinIndexedVector *regionSparse,
     FloatT *dluval = factInfo_.xeeadr;
     int *mcstrt = factInfo_.xcsadr + lstart;
     if (ndo)
-      assert(dluval[mcstrt[ndo] + 1] < 1.0e50);
+      assert(dluval[mcstrt[ndo] + 1] < OneE50);
   }
 #endif
   assert(numberRows_ == numberColumns_);
@@ -1276,7 +1276,7 @@ static void c_ekksmem_copy(EKKfactinfo *fact, const EKKfactinfo *rhsFact)
               {
                 int j;
                 for (j = istart; j < istart + hinrow[i]; j++)
-                  assert(CoinAbs(de2val[j]) < 1.0e50);
+                  assert(CoinAbs(de2val[j]) < OneE50);
               }
 #endif
             }

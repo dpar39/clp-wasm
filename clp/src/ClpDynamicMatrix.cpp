@@ -210,14 +210,14 @@ ClpDynamicMatrix::ClpDynamicMatrix(ClpSimplex *model, int numberSets,
     if (lower[i] > TOO_SMALL_FLOAT)
       lowerSet_[i] = lower[i];
     else
-      lowerSet_[i] = -1.0e30;
+      lowerSet_[i] = -OneE30;
   }
   upperSet_ = new FloatT[numberSets_];
   for (i = 0; i < numberSets_; i++) {
     if (upper[i] < TOO_BIG_FLOAT)
       upperSet_[i] = upper[i];
     else
-      upperSet_[i] = 1.0e30;
+      upperSet_[i] = OneE30;
   }
   id_ = new int[numberGubInSmall];
   for (i = 0; i < numberGubInSmall; i++)
@@ -247,7 +247,7 @@ ClpDynamicMatrix::ClpDynamicMatrix(ClpSimplex *model, int numberSets,
     // set all upper bounds so we have enough space
     FloatT *columnUpper = model->columnUpper();
     for (i = firstDynamic_; i < lastDynamic_; i++)
-      columnUpper[i] = 1.0e10;
+      columnUpper[i] = OneE10;
   }
   // resize matrix
   // extra 1 is so can keep number of elements handy
@@ -747,7 +747,7 @@ ClpDynamicMatrix::rhsOffset(ClpSimplex *model, bool forceRefresh,
                   value = columnLower_[j];
               } else if (getDynamicStatus(j) == atUpperBound) {
                 value = columnUpper_[j];
-                assert(value < 1.0e30);
+                assert(value < OneE30);
               } else if (getDynamicStatus(j) == soloKey) {
                 value = keyValue(iSet);
               }
@@ -2463,7 +2463,7 @@ int ClpDynamicMatrix::addColumn(CoinBigIndex numberEntries, const int *row, cons
           printf("seems odd - same els but cost,lo,up are %g,%g,%g and %g,%g,%g\n",
             (double)cost, (double)lower, (double)upper, (double)cost_[j],
             columnLower_ ? (double)columnLower_[j] : 0.0,
-            columnUpper_ ? (double)columnUpper_[j] : 1.0e100);
+            columnUpper_ ? (double)columnUpper_[j] : (double)OneE100);
         } else {
           setDynamicStatus(j, status);
           return j;

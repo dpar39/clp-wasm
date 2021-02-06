@@ -497,8 +497,8 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
       FloatT element0 = colels[start];
       FloatT rowUpper0 = rup[row0];
       bool swapSigns0 = false;
-      if (rlo[row0] > -1.0e30) {
-        if (rup[row0] > 1.0e30) {
+      if (rlo[row0] > -OneE30) {
+        if (rup[row0] > OneE30) {
           swapSigns0 = true;
           rowUpper0 = -rlo[row0];
           element0 = -element0;
@@ -506,7 +506,7 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
           // range or equality
           continue;
         }
-      } else if (rup[row0] > 1.0e30) {
+      } else if (rup[row0] > OneE30) {
         // free
         continue;
       }
@@ -526,8 +526,8 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
       FloatT element1 = colels[start + 1];
       FloatT rowUpper1 = rup[row1];
       bool swapSigns1 = false;
-      if (rlo[row1] > -1.0e30) {
-        if (rup[row1] > 1.0e30) {
+      if (rlo[row1] > -OneE30) {
+        if (rup[row1] > OneE30) {
           swapSigns1 = true;
           rowUpper1 = -rlo[row1];
           element1 = -element1;
@@ -535,7 +535,7 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
           // range or equality
           continue;
         }
-      } else if (rup[row1] > 1.0e30) {
+      } else if (rup[row1] > OneE30) {
         // free
         continue;
       }
@@ -587,7 +587,7 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
           FloatT sum0 = 0.0;
           FloatT sum1 = 0.0;
           FloatT value = bound[k];
-          if (CoinAbs(value) < 1.0e30) {
+          if (CoinAbs(value) < OneE30) {
             sum0 += alpha[0] * value;
             sum1 += alpha[1] * value;
           } else {
@@ -670,12 +670,12 @@ static int tightenDoubletons2(CoinPresolveMatrix *prob)
           }
           // if costed may be able to adjust
           if (cost[icol] >= 0.0) {
-            if (highestLowest < upperX && highestLowest >= lowerX && highestHighest < 1.0e30) {
+            if (highestLowest < upperX && highestLowest >= lowerX && highestHighest < OneE30) {
               highestHighest = CoinMin(highestHighest, highestLowest);
             }
           }
           if (cost[icol] <= 0.0) {
-            if (lowestHighest > lowerX && lowestHighest <= upperX && lowestHighest > -1.0e30) {
+            if (lowestHighest > lowerX && lowestHighest <= upperX && lowestHighest > -OneE30) {
               lowestLowest = CoinMax(lowestLowest, lowestHighest);
             }
           }

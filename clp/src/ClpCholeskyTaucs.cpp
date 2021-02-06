@@ -338,7 +338,7 @@ int ClpCholeskyTaucs::factorize(const FloatT *diagonal, int *rowsDropped)
   else
     cleanCholesky = false;
   /*
-       How do I find out where 1.0e100's are in cholesky?
+       How do I find out where OneE100's are in cholesky?
      */
   if (cleanCholesky) {
     //drop fresh makes some formADAT easier

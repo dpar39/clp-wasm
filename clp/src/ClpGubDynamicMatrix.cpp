@@ -139,14 +139,14 @@ ClpGubDynamicMatrix::ClpGubDynamicMatrix(ClpSimplex *model, int numberSets,
       if (lower[i] > TOO_SMALL_FLOAT)
         lowerSet_[i] = lower[i];
       else
-        lowerSet_[i] = -1.0e30;
+        lowerSet_[i] = -OneE30;
     }
     upperSet_ = new FloatT[numberSets_];
     for (i = 0; i < numberSets_; i++) {
       if (upper[i] < TOO_BIG_FLOAT)
         upperSet_[i] = upper[i];
       else
-        upperSet_[i] = 1.0e30;
+        upperSet_[i] = OneE30;
     }
   } else {
     lowerSet_ = NULL;
@@ -176,7 +176,7 @@ ClpGubDynamicMatrix::ClpGubDynamicMatrix(ClpSimplex *model, int numberSets,
     // set all upper bounds so we have enough space
     FloatT *columnUpper = model->columnUpper();
     for (i = firstDynamic_; i < lastDynamic_; i++)
-      columnUpper[i] = 1.0e10;
+      columnUpper[i] = OneE10;
   }
   // resize matrix
   // extra 1 is so can keep number of elements handy
@@ -644,7 +644,7 @@ int ClpGubDynamicMatrix::synchronize(ClpSimplex *model, int mode)
         upperColumn[firstAvailable_] = upperColumn[iColumn];
         FloatT originalLower = lowerColumn_ ? lowerColumn_[jColumn] : 0.0;
         FloatT originalUpper = upperColumn_ ? upperColumn_[jColumn] : COIN_DBL_MAX;
-        if (originalUpper > 1.0e30)
+        if (originalUpper > OneE30)
           originalUpper = COIN_DBL_MAX;
         model->nonLinearCost()->setOne(firstAvailable_, solution[iColumn],
           originalLower, originalUpper,

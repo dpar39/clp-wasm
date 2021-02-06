@@ -155,7 +155,7 @@ int ClpPredictorCorrector::solve()
     }
     return -1;
   }
-  mu_ = 1.0e10;
+  mu_ = OneE10;
   diagonalScaleFactor_ = 1.0;
   //set iterations
   numberIterations_ = -1;
@@ -1580,7 +1580,7 @@ CoinWorkDouble ClpPredictorCorrector::findDirectionVector(const int phase)
   CoinWorkDouble *regionSave = NULL; //for refinement
   int numberTries = 0;
   CoinWorkDouble relativeError = COIN_DBL_MAX;
-  CoinWorkDouble tryError = 1.0e31;
+  CoinWorkDouble tryError = OneE31;
   CoinWorkDouble saveMaximum = 0.0;
   FloatT firstError = 0.0;
   FloatT lastError2 = 0.0;
@@ -1935,8 +1935,8 @@ int ClpPredictorCorrector::createSolution()
   //accumulate primal solution in primal region
   //DZ in lowerDual
   //DW in upperDual
-  CoinWorkDouble infiniteCheck = 1.0e40;
-  //CoinWorkDouble     fakeCheck=1.0e10;
+  CoinWorkDouble infiniteCheck = OneE40;
+  //CoinWorkDouble     fakeCheck=OneE10
   //use deltaX region for work region
   for (iColumn = 0; iColumn < numberTotal; iColumn++) {
     CoinWorkDouble primalValue = solution_[iColumn];
@@ -2066,7 +2066,7 @@ int ClpPredictorCorrector::createSolution()
     << static_cast< FloatT >(initialValue) << static_cast< FloatT >(objectiveNorm_)
     << CoinMessageEol;
   CoinWorkDouble extra = 1.0e-10;
-  CoinWorkDouble largeGap = 1.0e15;
+  CoinWorkDouble largeGap = OneE15;
   //CoinWorkDouble safeObjectiveValue=2.0*objectiveNorm_;
   CoinWorkDouble safeObjectiveValue = objectiveNorm_ + 1.0;
   CoinWorkDouble safeFree = 1.0e-1 * initialValue;
@@ -2077,7 +2077,7 @@ int ClpPredictorCorrector::createSolution()
   //printf("temp safe dual value of %g, primal value of %g\n",
   // safeObjectiveValue,initialValue);
   CoinWorkDouble zwLarge = 1.0e2 * initialValue;
-  //zwLarge=1.0e40;
+  //zwLarge=OneE40;
   if (cholesky_->choleskyCondition() < 0.0 && cholesky_->type() < 20) {
     // looks bad - play safe
     initialValue *= 10.0;
@@ -2355,10 +2355,10 @@ CoinWorkDouble ClpPredictorCorrector::complementarityGap(int &numberComplementar
   int numberNegativeGaps = 0;
   CoinWorkDouble sumNegativeGap = 0.0;
   CoinWorkDouble largeGap = 1.0e2 * solutionNorm_;
-  if (largeGap < 1.0e10) {
-    largeGap = 1.0e10;
+  if (largeGap < OneE10) {
+    largeGap = OneE10;
   }
-  largeGap = 1.0e30;
+  largeGap = OneE30;
   CoinWorkDouble dualTolerance = dblParam_[ClpDualTolerance];
   CoinWorkDouble primalTolerance = dblParam_[ClpPrimalTolerance];
   dualTolerance = dualTolerance / scaleFactor_;
@@ -3063,13 +3063,13 @@ int ClpPredictorCorrector::updateSolution(CoinWorkDouble /*nextGap*/)
   if (freeMultiplier < trueNorm) {
     freeMultiplier = trueNorm;
   }
-  if (freeMultiplier > 1.0e12) {
-    freeMultiplier = 1.0e12;
+  if (freeMultiplier > OneE12) {
+    freeMultiplier = OneE12;
   }
   freeMultiplier = 0.5 / freeMultiplier;
   CoinWorkDouble condition = CoinAbs(cholesky_->choleskyCondition());
   bool caution;
-  if ((condition < 1.0e10 && trueNorm < 1.0e12) || numberIterations_ < 20) {
+  if ((condition < OneE10 && trueNorm < OneE12) || numberIterations_ < 20) {
     caution = false;
   } else {
     caution = true;
@@ -3104,7 +3104,7 @@ int ClpPredictorCorrector::updateSolution(CoinWorkDouble /*nextGap*/)
   int numberIncreased = 0;
   int numberDecreased = 0;
   CoinWorkDouble largestDiagonal = 0.0;
-  CoinWorkDouble smallestDiagonal = 1.0e50;
+  CoinWorkDouble smallestDiagonal = OneE50;
   CoinWorkDouble largeGap2 = CoinMax(1.0e7, 1.0e2 * solutionNorm_);
   //largeGap2 = 1.0e9;
   // When to start looking at killing (factor0
@@ -3677,11 +3677,11 @@ int ClpPredictorCorrector::updateSolution(CoinWorkDouble /*nextGap*/)
     goneDualFeasible_ = dualFeasible;
   }
   //objectiveValue();
-  if (solutionNorm_ > 1.0e40) {
+  if (solutionNorm_ > OneE40) {
     std::cout << "primal off to infinity" << std::endl;
     abort();
   }
-  if (objectiveNorm_ > 1.0e40) {
+  if (objectiveNorm_ > OneE40) {
     std::cout << "dual off to infinity" << std::endl;
     abort();
   }

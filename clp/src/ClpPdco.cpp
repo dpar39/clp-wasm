@@ -172,7 +172,7 @@ int ClpPdco::pdco(ClpPdcoBase *stuff, Options &options, Info &info, Outfo &outfo
   //-----------------------------------------------------------------------
 
   //  global pdDDD1 pdDDD2 pdDDD3
-  FloatT inf = 1.0e30;
+  FloatT inf = OneE30;
   FloatT eps = 1.0e-15;
   FloatT atolold = -1.0, r3ratio = -1.0, Pinf, Dinf, Cinf, Cinf0;
 

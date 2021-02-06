@@ -189,7 +189,7 @@ public:
       if (iRange + 1 != start_[sequence + 1] && !infeasible(iRange + 1))
         returnValue = cost_[iRange] - cost_[iRange + 1];
       else
-        returnValue = -1.0e100;
+        returnValue = -OneE100;
     }
     if (CLP_METHOD2) {
       returnValue = -infeasibilityWeight_;
@@ -204,7 +204,7 @@ public:
       if (iRange != start_[sequence] && !infeasible(iRange - 1))
         returnValue = cost_[iRange] - cost_[iRange - 1];
       else
-        returnValue = 1.0e100;
+        returnValue = OneE100;
     }
     if (CLP_METHOD2) {
       returnValue = infeasibilityWeight_;

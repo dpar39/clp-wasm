@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <iostream>
 #ifndef NDEBUG
-#define CLP_DEBUG 1
+//#define CLP_DEBUG 1
 #endif
 // primal
 int ClpSimplexNonlinear::primal()
@@ -393,7 +393,7 @@ void ClpSimplexNonlinear::statusOfProblemInPrimal(int &lastCleaned, int type,
       nonLinearCost_->checkInfeasibilities(0.0);
       gutsOfSolution(NULL, NULL, true);
 
-      infeasibilityCost_ = 1.0e100;
+      infeasibilityCost_ = OneE100;
       // put back original costs
       createRim(4);
       nonLinearCost_->checkInfeasibilities(primalTolerance_);
@@ -433,7 +433,7 @@ void ClpSimplexNonlinear::statusOfProblemInPrimal(int &lastCleaned, int type,
           nonLinearCost_->checkInfeasibilities(primalTolerance_);
           gutsOfSolution(NULL, NULL, true);
           // so will exit
-          infeasibilityCost_ = 1.0e30;
+          infeasibilityCost_ = OneE30;
           // reset infeasibilities
           sumPrimalInfeasibilities_ = nonLinearCost_->sumInfeasibilities();
           ;
@@ -523,7 +523,7 @@ void ClpSimplexNonlinear::statusOfProblemInPrimal(int &lastCleaned, int type,
       if (nonLinearCost_->numberInfeasibilities()) {
         if (infeasibilityCost_ > 1.0e18 && perturbation_ == 101) {
           // back off weight
-          infeasibilityCost_ = 1.0e13;
+          infeasibilityCost_ = OneE13;
           unPerturb(); // stop any further perturbation
         }
         //we need infeasiblity cost changed
@@ -1236,7 +1236,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
   int bestBasicSequence = -1;
   FloatT eps = 1.0e-1;
   eps = 1.0e-6;
-  FloatT basicTheta = 1.0e30;
+  FloatT basicTheta = OneE30;
   FloatT objTheta = 0.0;
   bool finished = false;
   sequenceIn_ = -1;
@@ -1408,7 +1408,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
         CoinMemcpyN(work, numberTotal, dArray2);
         if (sequenceIn_ >= 0 && numberNonBasic == 1) {
           // see if simple move
-          FloatT objTheta2 = objective_->stepLength(this, solution_, work, 1.0e30,
+          FloatT objTheta2 = objective_->stepLength(this, solution_, work, OneE30,
             currentObj, predictedObj, thetaObj);
           rowArray->clear();
 
@@ -1480,7 +1480,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
               if (easyDrop > objDrop) {
                 // debug
                 printf("****** th %g simple %g\n", (double)th, (double)simpleObjective);
-                objective_->stepLength(this, solution_, work, 1.0e30,
+                objective_->stepLength(this, solution_, work, OneE30,
                   currentObj, predictedObj, simpleObjective);
                 objective_->stepLength(this, solution_, work, largest,
                   currentObj, predictedObj, simpleObjective);
@@ -1564,7 +1564,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
           //assert(g3>0);
           FloatT zzz[10000];
           int iVariable;
-          g2 = 1.0e50; // temp
+          g2 = OneE50; // temp
           if (CoinAbs(g2) >= 0.2 * CoinAbs(g1)) {
             // restart
             FloatT delta = innerProduct(saveY2, number2, saveS2) / innerProduct(saveY2, number2, saveY2);
@@ -1853,9 +1853,9 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
       nPasses++;
       if (nPasses > 2000)
         finished = true;
-      FloatT theta = 1.0e30;
-      basicTheta = 1.0e30;
-      theta_ = 1.0e30;
+      FloatT theta = OneE30;
+      basicTheta = OneE30;
+      theta_ = OneE30;
       FloatT basicTolerance = 1.0e-4 * primalTolerance_;
       for (iSequence = 0; iSequence < numberTotal; iSequence++) {
         //if (flagged(iSequence)
@@ -2098,7 +2098,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
       //returnCode=2;
       //objTheta=-1.0; // so we fall through
     }
-    if (theta_ >= 1.0e30) { // odd
+    if (theta_ >= OneE30) { // odd
       returnCode = 2;
       break;
     }
@@ -2141,7 +2141,7 @@ int ClpSimplexNonlinear::pivotColumn(CoinIndexedVector *longArray,
         // First pass we take correct direction and large pivots
         // then correct direction
         // then any
-        FloatT check[] = { 1.0e-8, -1.0e-12, -1.0e30 };
+        FloatT check[] = { 1.0e-8, -1.0e-12, -OneE30 };
         FloatT mult[] = { 100.0, 1.0, 1.0 };
         for (int iPass = 0; iPass < 3; iPass++) {
           //if (!bestValue&&iPass==2)
@@ -2856,12 +2856,12 @@ int ClpSimplexNonlinear::primalDualCuts(char *rowsIn, int startUp, int algorithm
               }
             } else {
               // keep
-              weight[iRow] = -1.0e40;
+              weight[iRow] = -OneE40;
               numberKept++;
             }
           } else {
             // keep
-            weight[iRow] = -1.0e50;
+            weight[iRow] = -OneE50;
             numberKept++;
             numberBinding++;
           }
@@ -2898,7 +2898,7 @@ int ClpSimplexNonlinear::primalDualCuts(char *rowsIn, int startUp, int algorithm
         numberPrimalInfeasibilities_ = 0;
         sumPrimalInfeasibilities_ = 0.0;
         for (iSort = 0; iSort < numberSort; iSort++) {
-          if (weight[iSort] > -1.0e30 && weight[iSort] < -1.0e-8) {
+          if (weight[iSort] > -OneE30 && weight[iSort] < -1.0e-8) {
             numberPrimalInfeasibilities_++;
             sumPrimalInfeasibilities_ += -weight[iSort];
           }
@@ -2991,7 +2991,7 @@ int ClpSimplexNonlinear::primalSLP(int numberPasses, FloatT deltaTolerance,
   }
   int saveLogLevel = logLevel();
   int iPass;
-  FloatT lastObjective = 1.0e31;
+  FloatT lastObjective = OneE31;
   FloatT *saveSolution = new FloatT[numberColumns];
   FloatT *saveRowSolution = new FloatT[numberRows];
   memset(saveRowSolution, 0, numberRows * sizeof(FloatT));
@@ -3008,7 +3008,7 @@ for (jNon = 0; jNon < MULTIPLE; jNon++) {
   CoinMemcpyN(solution, numberColumns, saveSolutionM);
 }
 #endif
-FloatT targetDrop = 1.0e31;
+FloatT targetDrop = OneE31;
 FloatT objectiveOffset;
 getDblParam(ClpObjOffset, objectiveOffset);
 // 1 bound up, 2 up, -1 bound down, -2 down, 0 no change
@@ -3221,7 +3221,7 @@ for (iPass = 0; iPass < numberPasses; iPass++) {
             absolutelyOptimal = true;
             break;
           }
-          FloatT theta = 1.0e30;
+          FloatT theta = OneE30;
           int iSequence;
           for (iSequence = 0; iSequence < numberTotal; iSequence++) {
             FloatT alpha = work[iSequence];
@@ -3378,7 +3378,7 @@ for (iPass = 0; iPass < numberPasses; iPass++) {
     else
       goodMove = 0;
   } else {
-    maxDelta = 1.0e10;
+    maxDelta = OneE10;
   }
   FloatT maxGap = 0.0;
   int numberSmaller = 0;
@@ -3892,9 +3892,9 @@ int ClpSimplexNonlinear::primalSLP(int numberConstraints, ClpConstraint **constr
       solution[iColumn] = upper;
 #if 0
           FloatT large = CoinMax(1000.0, 10.0 * CoinAbs(solution[iColumn]));
-          if (upper > 1.0e10)
+          if (upper > OneE10)
                upper = solution[iColumn] + large;
-          if (lower < -1.0e10)
+          if (lower < -OneE10)
                lower = solution[iColumn] - large;
 #else
     upper = solution[iColumn] + 0.5;
@@ -3908,12 +3908,12 @@ int ClpSimplexNonlinear::primalSLP(int numberConstraints, ClpConstraint **constr
   }
   bool tryFix = false;
   int iPass;
-  FloatT lastObjective = 1.0e31;
-  FloatT lastGoodObjective = 1.0e31;
+  FloatT lastObjective = OneE31;
+  FloatT lastGoodObjective = OneE31;
   FloatT *bestSolution = NULL;
   FloatT *saveSolution = new FloatT[numberColumns2 + numberRows];
   char *saveStatus = new char[numberColumns2 + numberRows];
-  FloatT targetDrop = 1.0e31;
+  FloatT targetDrop = OneE31;
   // 1 bound up, 2 up, -1 bound down, -2 down, 0 no change
   for (iPass = 0; iPass < 3; iPass++) {
     last[iPass] = new int[numberNonLinearColumns];
@@ -4216,9 +4216,9 @@ int ClpSimplexNonlinear::primalSLP(int numberConstraints, ClpConstraint **constr
         }
       }
       FloatT maxDelta = 0.0;
-      FloatT smallestTrust = 1.0e31;
-      FloatT smallestNonLinearGap = 1.0e31;
-      FloatT smallestGap = 1.0e31;
+      FloatT smallestTrust = OneE31;
+      FloatT smallestNonLinearGap = OneE31;
+      FloatT smallestGap = OneE31;
       bool increasing = false;
       for (iColumn = 0; iColumn < numberColumns_; iColumn++) {
         FloatT gap = columnUpper[iColumn] - columnLower[iColumn];

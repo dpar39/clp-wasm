@@ -299,20 +299,20 @@ const CoinPresolveAction
         const FloatT lb2 = clo[icol2];
         const FloatT ub2 = cup[icol2];
         if (coeff2 > 0.0) {
-          if (ub2 > 1.0e30)
+          if (ub2 > OneE30)
             maxUp = COIN_DBL_MAX;
           else
             maxUp += coeff2 * ub2;
-          if (lb2 < -1.0e30)
+          if (lb2 < -OneE30)
             maxDown = -COIN_DBL_MAX;
           else
             maxDown += coeff2 * lb2;
         } else {
-          if (lb2 < -1.0e30)
+          if (lb2 < -OneE30)
             maxUp = COIN_DBL_MAX;
           else
             maxUp += coeff2 * lb2;
-          if (ub2 > 1.0e30)
+          if (ub2 > OneE30)
             maxDown = -COIN_DBL_MAX;
           else
             maxDown += coeff2 * ub2;
@@ -393,20 +393,20 @@ const CoinPresolveAction
         const FloatT lb2 = clo[icol2];
         const FloatT ub2 = cup[icol2];
         if (coeff2 > 0.0) {
-          if (ub2 > 1.0e30)
+          if (ub2 > OneE30)
             maxUp = COIN_DBL_MAX;
           else
             maxUp += coeff2 * ub2;
-          if (lb2 < -1.0e30)
+          if (lb2 < -OneE30)
             maxDown = -COIN_DBL_MAX;
           else
             maxDown += coeff2 * lb2;
         } else {
-          if (lb2 < -1.0e30)
+          if (lb2 < -OneE30)
             maxUp = COIN_DBL_MAX;
           else
             maxUp += coeff2 * lb2;
-          if (ub2 > 1.0e30)
+          if (ub2 > OneE30)
             maxDown = -COIN_DBL_MAX;
           else
             maxDown += coeff2 * ub2;
@@ -432,7 +432,7 @@ const CoinPresolveAction
 #if USE_ACTIVE > 2
             printf("(%d has one entry) ", icol);
 #endif
-            if (active[icol] == 3 || clo[icol] < -1.0e30)
+            if (active[icol] == 3 || clo[icol] < -OneE30)
               nOne = 0; // no good
           }
         }
@@ -1302,20 +1302,20 @@ const CoinPresolveAction
           FloatT value = rowels[k];
           j = hcol[k];
           if (value > 0.0) {
-            if (cup[j] < 1.0e12)
+            if (cup[j] < OneE12)
               dmaxup += cup[j] * value;
             else
               ++iflagu;
-            if (clo[j] > -1.0e12)
+            if (clo[j] > -OneE12)
               dmaxdown += clo[j] * value;
             else
               ++iflagl;
           } else if (value < 0.0) {
-            if (cup[j] < 1.0e12)
+            if (cup[j] < OneE12)
               dmaxdown += cup[j] * value;
             else
               ++iflagl;
-            if (clo[j] > -1.0e12)
+            if (clo[j] > -OneE12)
               dmaxup += clo[j] * value;
             else
               ++iflagu;
@@ -1332,7 +1332,7 @@ const CoinPresolveAction
     }
   }
   for (int j = 0; j < ncols; j++) {
-    if (hincol[j] == 1 && cost[j] > -1.0e10) {
+    if (hincol[j] == 1 && cost[j] > -OneE10) {
       // can we make equality row
       FloatT coeff = colels[mcstrt[j]];
       int irow = hrow[mcstrt[j]];
@@ -1349,14 +1349,14 @@ const CoinPresolveAction
         dmaxdown, dmaxup);
 #endif
       if (coeff > 0.0) {
-        if (clo[j] > -1.0e12) {
+        if (clo[j] > -OneE12) {
           dmaxdown -= coeff * clo[j];
           if (iflagl)
             dmaxdown = -1.0e60;
         } else if (iflagl > 1) {
           dmaxdown = -1.0e60;
         }
-        if (cup[j] < 1.0e12) {
+        if (cup[j] < OneE12) {
           dmaxup -= coeff * cup[j];
           if (iflagu)
             dmaxup = 1.0e60;
@@ -1369,12 +1369,12 @@ const CoinPresolveAction
       if (cost[j] > 0.0) {
         // we want as small as possible
         if (coeff > 0) {
-          if (rlo[irow] > -1.0e12)
+          if (rlo[irow] > -OneE12)
             rhs = rlo[irow] / coeff;
           else
             rhs = -COIN_DBL_MAX;
         } else {
-          if (rup[irow] < 1.0e12)
+          if (rup[irow] < OneE12)
             rhs = -rup[irow] / coeff;
           else
             rhs = COIN_DBL_MAX;
@@ -1382,7 +1382,7 @@ const CoinPresolveAction
       } else {
         // we want as large as possible
         if (coeff > 0) {
-          if (rup[irow] < 1.0e12) {
+          if (rup[irow] < OneE12) {
             rhs = rup[irow];
             if (cup[j] * coeff + dmaxdown > rhs - 1.0e-7 && clo[j] * coeff + dmaxup < rhs + 1.0e-7) {
 #if 0 //USE_ACTIVE<2
@@ -1397,12 +1397,12 @@ const CoinPresolveAction
             }
             rhs /= coeff;
           } else {
-            if (cup[j] * coeff + dmaxdown > 1.0e30) {
+            if (cup[j] * coeff + dmaxdown > OneE30) {
               //printf("unbounded?\n");
             }
           }
         } else {
-          if (rlo[irow] > -1.0e12) {
+          if (rlo[irow] > -OneE12) {
             rhs = rlo[irow];
             if (cup[j] * coeff + dmaxdown < rhs + 1.0e-7
               && clo[j] * coeff + dmaxup > rhs - 1.0e-7) {
@@ -1418,7 +1418,7 @@ const CoinPresolveAction
             }
             rhs /= coeff;
           } else {
-            if (cup[j] * coeff + dmaxdown > 1.0e30) {
+            if (cup[j] * coeff + dmaxdown > OneE30) {
               //printf("unbounded?\n");
             }
           }

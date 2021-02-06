@@ -1654,12 +1654,12 @@ void CoinFactorization::updateColumnR(CoinIndexedVector *regionSparse) const
   methodTime[2] = sizeR + numberPivots_ * startDot + numberNonZero * final;
   // switch off if necessary
   if (!numberInColumnPlus_.array()) {
-    methodTime[0] = 1.0e100;
-    methodTime[1] = 1.0e100;
+    methodTime[0] = OneE100;
+    methodTime[1] = OneE100;
   } else if (!sparse_.array()) {
-    methodTime[0] = 1.0e100;
+    methodTime[0] = OneE100;
   }
-  FloatT best = 1.0e100;
+  FloatT best = OneE100;
   for (int i = 0; i < 3; i++) {
     if (methodTime[i] < best) {
       best = methodTime[i];
@@ -1974,16 +1974,16 @@ void CoinFactorization::updateColumnRFT(CoinIndexedVector *regionSparse,
     methodTime[2] = sizeR + numberPivots_ * startDot + numberNonZero * final;
     // switch off if necessary
     if (!numberInColumnPlus_.array()) {
-      methodTime[0] = 1.0e100;
-      methodTime[1] = 1.0e100;
+      methodTime[0] = OneE100;
+      methodTime[1] = OneE100;
     } else if (!sparse_.array()) {
-      methodTime[0] = 1.0e100;
+      methodTime[0] = OneE100;
     }
     const int *numberInColumnPlus = numberInColumnPlus_.array();
     int *numberInColumn = numberInColumn_.array();
     // adjust for final scan
     methodTime[1] += final;
-    FloatT best = 1.0e100;
+    FloatT best = OneE100;
     for (int i = 0; i < 3; i++) {
       if (methodTime[i] < best) {
         best = methodTime[i];

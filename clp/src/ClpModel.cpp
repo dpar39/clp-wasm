@@ -238,12 +238,12 @@ void ClpModel::setColumnScale(FloatT *scale)
 //#############################################################################
 void ClpModel::setPrimalTolerance(FloatT value)
 {
-  if (value > 0.0 && value < 1.0e10)
+  if (value > 0.0 && value < OneE10)
     dblParam_[ClpPrimalTolerance] = value;
 }
 void ClpModel::setDualTolerance(FloatT value)
 {
-  if (value > 0.0 && value < 1.0e10)
+  if (value > 0.0 && value < OneE10)
     dblParam_[ClpDualTolerance] = value;
 }
 void ClpModel::setOptimizationDirection(FloatT value)
@@ -1068,12 +1068,12 @@ bool ClpModel::setDblParam(ClpDblParam key, FloatT value)
     break;
 
   case ClpDualTolerance:
-    if (value <= 0.0 || value > 1.0e10)
+    if (value <= 0.0 || value > OneE10)
       return false;
     break;
 
   case ClpPrimalTolerance:
-    if (value <= 0.0 || value > 1.0e10)
+    if (value <= 0.0 || value > OneE10)
       return false;
     break;
 
@@ -1095,7 +1095,7 @@ bool ClpModel::setDblParam(ClpDblParam key, FloatT value)
     break;
 
   case ClpPresolveTolerance:
-    if (value <= 0.0 || value > 1.0e10)
+    if (value <= 0.0 || value > OneE10)
       return false;
     break;
 
@@ -3620,7 +3620,7 @@ int ClpModel::emptyProblem(int *infeasNumber, FloatT *infeasSum, bool printMessa
     for (int i = 0; i < numberRows_; i++) {
       dual_[i] = 0.0;
       if (rowLower_[i] <= rowUpper_[i]) {
-        if (rowLower_[i] > -1.0e30 || rowUpper_[i] < 1.0e30) {
+        if (rowLower_[i] > -OneE30 || rowUpper_[i] < OneE30) {
           if (rowLower_[i] <= 0.0 && rowUpper_[i] >= 0.0) {
             if (CoinAbs(rowLower_[i]) < CoinAbs(rowUpper_[i]))
               rowActivity_[i] = rowLower_[i];
@@ -3653,7 +3653,7 @@ int ClpModel::emptyProblem(int *infeasNumber, FloatT *infeasSum, bool printMessa
       reducedCost_[i] = cost[i];
       FloatT objValue = cost[i] * optimizationDirection_;
       if (columnLower_[i] <= columnUpper_[i]) {
-        if (columnLower_[i] > -1.0e30 || columnUpper_[i] < 1.0e30) {
+        if (columnLower_[i] > -OneE30 || columnUpper_[i] < OneE30) {
           if (!objValue) {
             if (CoinAbs(columnLower_[i]) < CoinAbs(columnUpper_[i])) {
               columnActivity_[i] = columnLower_[i];
@@ -3663,7 +3663,7 @@ int ClpModel::emptyProblem(int *infeasNumber, FloatT *infeasSum, bool printMessa
               status_[i] = 2;
             }
           } else if (objValue > 0.0) {
-            if (columnLower_[i] > -1.0e30) {
+            if (columnLower_[i] > -OneE30) {
               columnActivity_[i] = columnLower_[i];
               status_[i] = 3;
             } else {
@@ -3678,7 +3678,7 @@ int ClpModel::emptyProblem(int *infeasNumber, FloatT *infeasSum, bool printMessa
             }
             objectiveValue_ += columnActivity_[i] * objValue;
           } else {
-            if (columnUpper_[i] < 1.0e30) {
+            if (columnUpper_[i] < OneE30) {
               columnActivity_[i] = columnUpper_[i];
               status_[i] = 2;
             } else {
@@ -3948,11 +3948,11 @@ void ClpModel::gutsOfScaling()
     FloatT inverseMultiplier = 1.0 / multiplier;
     rowActivity_[i] *= multiplier;
     dual_[i] *= inverseMultiplier;
-    if (rowLower_[i] > -1.0e30)
+    if (rowLower_[i] > -OneE30)
       rowLower_[i] *= multiplier;
     else
       rowLower_[i] = -COIN_DBL_MAX;
-    if (rowUpper_[i] < 1.0e30)
+    if (rowUpper_[i] < OneE30)
       rowUpper_[i] *= multiplier;
     else
       rowUpper_[i] = COIN_DBL_MAX;
@@ -3961,11 +3961,11 @@ void ClpModel::gutsOfScaling()
     FloatT multiplier = 1.0 * inverseColumnScale_[i];
     columnActivity_[i] *= multiplier;
     reducedCost_[i] *= columnScale_[i];
-    if (columnLower_[i] > -1.0e30)
+    if (columnLower_[i] > -OneE30)
       columnLower_[i] *= multiplier;
     else
       columnLower_[i] = -COIN_DBL_MAX;
-    if (columnUpper_[i] < 1.0e30)
+    if (columnUpper_[i] < OneE30)
       columnUpper_[i] *= multiplier;
     else
       columnUpper_[i] = COIN_DBL_MAX;
@@ -4406,7 +4406,7 @@ ClpDataSave::ClpDataSave()
   infeasibilityCost_ = 0.0;
   sparseThreshold_ = 0;
   pivotTolerance_ = 0.0;
-  zeroFactorizationTolerance_ = 1.0e13;
+  zeroFactorizationTolerance_ = OneE13;
   zeroSimplexTolerance_ = 1.0e-13;
   acceptablePivot_ = 0.0;
   objectiveScale_ = 1.0;

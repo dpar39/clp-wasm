@@ -117,7 +117,7 @@ public:
   int dual(int ifValuesPass, int startFinishOptions = 0);
   /** For strong branching.  On input lower and upper are new bounds
          while on output they are change in objective function values
-         (>1.0e50 infeasible).
+         (>OneE50 infeasible).
          Return code is 0 if nothing interesting, -1 if infeasible both
          ways and +1 if infeasible one way (check values to see which one(s))
          Solutions are filled in as well - even down, odd up - also

@@ -345,7 +345,7 @@ int ClpCholeskyDense::factorize(const CoinWorkDouble *diagonal, int *rowsDropped
             largest = CoinMax(largest, CoinAbs(element[j]));
           }
         } else {
-          value = 1.0e100;
+          value = OneE100;
           diagonal_[iColumn] = -value;
         }
         addOffset--;
@@ -359,7 +359,7 @@ int ClpCholeskyDense::factorize(const CoinWorkDouble *diagonal, int *rowsDropped
         value = 1.0 / value;
         largest = CoinMax(largest, CoinAbs(value));
       } else {
-        value = 1.0e100;
+        value = OneE100;
       }
       diagonal_[iColumn] = -value;
       work[iColumn - numberColumns + numberTotal] = -1.0;
@@ -466,7 +466,7 @@ void ClpCholeskyDense::factorizePart3(int *rowsDropped)
         diagonalValue = 1.0 / diagonalValue;
       } else {
         dropColumn = true;
-        workDouble_[iColumn] = -1.0e100;
+        workDouble_[iColumn] = -OneE100;
         diagonalValue = 0.0;
         integerParameters_[20]++;
       }
@@ -479,7 +479,7 @@ void ClpCholeskyDense::factorizePart3(int *rowsDropped)
         diagonalValue = 1.0 / diagonalValue;
       } else {
         dropColumn = true;
-        workDouble_[iColumn] = 1.0e100;
+        workDouble_[iColumn] = OneE100;
         diagonalValue = 0.0;
         integerParameters_[20]++;
       }
@@ -828,7 +828,7 @@ void ClpCholeskyCfactorLeaf(ClpCholeskyDenseC *thisStruct, longDouble *a, int n,
         t00 = 1.0 / t00;
       } else {
         dropColumn = true;
-        /*aa[j]=-1.0e100;*/
+        /*aa[j]=-OneE100;*/
         useT00 = -1.0e-100;
         t00 = 0.0;
       }
@@ -839,7 +839,7 @@ void ClpCholeskyCfactorLeaf(ClpCholeskyDenseC *thisStruct, longDouble *a, int n,
         t00 = 1.0 / t00;
       } else {
         dropColumn = true;
-        /*aa[j]=1.0e100;*/
+        /*aa[j]=OneE100;*/
         useT00 = 1.0e-100;
         t00 = 0.0;
       }
@@ -860,8 +860,8 @@ void ClpCholeskyCfactorLeaf(ClpCholeskyDenseC *thisStruct, longDouble *a, int n,
       /* drop column*/
       rowsDropped[j + rowOffset] = 2;
       diagonal[j] = 0.0;
-      /*aa[j]=1.0e100;*/
-      work[j] = 1.0e100;
+      /*aa[j]=OneE100;*/
+      work[j] = OneE100;
       for (i = j + 1; i < n; i++) {
         aa[i] = 0.0;
       }

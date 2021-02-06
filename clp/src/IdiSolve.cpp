@@ -158,7 +158,7 @@ Idiot::IdiSolve(
   FloatT *COIN_RESTRICT useCostExtra = NULL;
   FloatT *COIN_RESTRICT saveExtra = NULL;
   FloatT *COIN_RESTRICT cost = NULL;
-  FloatT saveValue = 1.0e30;
+  FloatT saveValue = OneE30;
   FloatT saveOffset = offset;
   FloatT useOffset = offset;
   /*#define NULLVECTOR*/
@@ -281,7 +281,7 @@ Idiot::IdiSolve(
           smaller = rowupper[i];
           value = 1.0;
         }
-        if (CoinAbs(smaller) > 1.0e10) {
+        if (CoinAbs(smaller) > OneE10) {
           if (!nbad)
             COIN_DETAIL_PRINT(printf("Can't handle rows where both bounds >1.0e10 %d %g\n",
               i, smaller));
@@ -300,7 +300,7 @@ Idiot::IdiSolve(
           }
         }
         difference = rowupper[i] - rowlower[i];
-        difference = CoinMin(difference, 1.0e31);
+        difference = CoinMin(difference, OneE31);
         rowupper[i] = smaller;
         elemExtra[extraBlock] = value;
         solExtra[extraBlock] = (rowupper[i] - rowsol[i]) / value;
@@ -340,7 +340,7 @@ Idiot::IdiSolve(
     history[i] = new FloatT[ncolx];
   }
   for (i = 0; i < DJTEST; i++) {
-    djSave[i] = 1.0e30;
+    djSave[i] = OneE30;
   }
 #ifndef OSI_IDIOT
   int numberColumns = model_->numberColumns();

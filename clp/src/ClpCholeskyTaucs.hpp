@@ -33,7 +33,7 @@ I also modified LAPACK dpotf2.f (two places) to change the GO TO 30 on AJJ.Lt.0.
 to
 
             IF( AJJ.LE.1.0e-20 ) THEN
-               AJJ = 1.0e100;
+               AJJ = OneE100;
             ELSE
                AJJ = SQRT( AJJ )
             END IF

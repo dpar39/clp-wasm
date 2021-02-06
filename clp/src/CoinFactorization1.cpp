@@ -572,7 +572,7 @@ void CoinFactorization::show_self() const
     for (j = startColumnU_.array()[i]; j < startColumnU_.array()[i] + numberInColumn_.array()[i];
          j++) {
       assert(indexRowU_.array()[j] >= 0 && indexRowU_.array()[j] < numberRows_);
-      assert(elementU_.array()[j] > -1.0e50 && elementU_.array()[j] < 1.0e50);
+      assert(elementU_.array()[j] > -OneE50 && elementU_.array()[j] < OneE50);
       std::cout << indexRowU_.array()[j] << " " << elementU_.array()[j] << std::endl;
     }
   }

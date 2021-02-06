@@ -183,13 +183,13 @@ const CoinPresolveAction *do_tighten_action::presolve(CoinPresolveMatrix *prob,
       if (!nonFree)
         iflag = 0; // all free anyway
       if (iflag) {
-        if (iflag == 1 && cup[j] < 1.0e10) {
+        if (iflag == 1 && cup[j] < OneE10) {
 #if PRESOLVE_DEBUG > 1
           printf("TIGHTEN UP:  %d\n", j);
 #endif
           fix_cols[nfixup_cols++] = j;
 
-        } else if (iflag == -1 && clo[j] > -1.0e10) {
+        } else if (iflag == -1 && clo[j] > -OneE10) {
           // symmetric case
           //mpre[j] = PRESOLVE_XUP;
 

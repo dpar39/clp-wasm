@@ -59,7 +59,7 @@ FloatT CoinMpsCardReader::osi_strtod(char *ptr, char **output, int type)
     while (*ptr == ' ' || *ptr == '\t')
       ptr++;
     char thisChar = 0;
-    while (value < 1.0e30) {
+    while (value < OneE30) {
       thisChar = *ptr;
       ptr++;
       if (thisChar >= '0' && thisChar <= '9')
@@ -67,7 +67,7 @@ FloatT CoinMpsCardReader::osi_strtod(char *ptr, char **output, int type)
       else
         break;
     }
-    if (value < 1.0e30) {
+    if (value < OneE30) {
       if (thisChar == '.') {
         // do fraction
         FloatT value2 = 0.0;
@@ -208,7 +208,7 @@ FloatT CoinMpsCardReader::osi_strtod(char *ptr, char **output, int type)
 FloatT CoinMpsCardReader::osi_strtod(char *ptr, char **output)
 {
   char *save = ptr;
-  FloatT value = -1.0e100;
+  FloatT value = -OneE100;
   if (!stringsAllowed_) {
     *output = save;
   } else {
@@ -650,7 +650,7 @@ CoinMpsCardReader::nextField()
             if (next == eol_) {
               // error unless row section or conic section
               position_ = eol_;
-              value_ = -1.0e100;
+              value_ = -OneE100;
               if (section_ != COIN_ROW_SECTION && section_ != COIN_CONIC_SECTION)
                 mpsType_ = COIN_UNKNOWN_MPS_TYPE;
               else
@@ -718,7 +718,7 @@ CoinMpsCardReader::nextField()
                 if (section_ != COIN_BOUNDS_SECTION) {
                   if (section_ != COIN_BASIS_SECTION)
                     mpsType_ = COIN_UNKNOWN_MPS_TYPE;
-                  value_ = -1.0e100;
+                  value_ = -OneE100;
                 } else {
                   value_ = 0.0;
                 }
@@ -742,7 +742,7 @@ CoinMpsCardReader::nextField()
                   // error
                   position_ = eol_;
                   mpsType_ = COIN_UNKNOWN_MPS_TYPE;
-                  value_ = -1.0e100;
+                  value_ = -OneE100;
                 }
               }
             }
@@ -788,11 +788,11 @@ CoinMpsCardReader::nextField()
           if (next == eol_) {
             // error
             position_ = eol_;
-            value_ = -1.0e100;
+            value_ = -OneE100;
             mpsType_ = COIN_UNKNOWN_MPS_TYPE;
           } else {
             nextBlank = nextBlankOr(next);
-            value_ = -1.0e100;
+            value_ = -OneE100;
             if (nextBlank) {
               save = *nextBlank;
               *nextBlank = '\0';
@@ -811,7 +811,7 @@ CoinMpsCardReader::nextField()
               // error
               position_ = eol_;
               mpsType_ = COIN_UNKNOWN_MPS_TYPE;
-              value_ = -1.0e100;
+              value_ = -OneE100;
             }
           }
         }
@@ -888,7 +888,7 @@ CoinMpsCardReader::nextField()
       save = *nextBlank;
       *nextBlank = '\0';
     }
-    //value_ = -1.0e100;
+    //value_ = -OneE100;
     char *after;
     value_ = osi_strtod(next, &after, ieeeFormat_);
     // see if error
@@ -904,7 +904,7 @@ CoinMpsCardReader::nextField()
       position_ = eol_;
       if (mpsType_ != COIN_S1_BOUND && mpsType_ != COIN_S2_BOUND)
         mpsType_ = COIN_UNKNOWN_MPS_TYPE;
-      value_ = -1.0e100;
+      value_ = -OneE100;
     }
   }
   return section_;
@@ -1012,7 +1012,7 @@ int CoinMpsCardReader::nextGmsField(int expectedType)
             strcpy(rowName_, position_);
             next = eol_;
           }
-          double val = -1.0e100;
+          auto val = (double)-OneE100;
           sscanf(rowName_, "%lg", &val);
           value_ = val;
           position_ = next;
@@ -1064,7 +1064,7 @@ int CoinMpsCardReader::nextGmsField(int expectedType)
               assert(*next == '*');
               next++;
               rowName_[put] = '\0';
-              double val = -1.0e100;
+              auto val = (double)-OneE100;
               sscanf(rowName_, "%lg", &val);
               value_ = val;
               position_ = next;
@@ -1082,7 +1082,7 @@ int CoinMpsCardReader::nextGmsField(int expectedType)
             int length = static_cast< int >(next - position_);
             strncpy(rowName_, position_, length);
             rowName_[length] = '\0';
-            double val = -1.0e100;
+            auto val = (double)-OneE100;
             sscanf(rowName_, "%lg", &val);
             value_ = val;
             position_ = next;
@@ -2256,10 +2256,10 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
 
           switch (cardReader_->mpsType()) {
           case COIN_UP_BOUND:
-            if (value == -1.0e100)
+            if (value == -OneE100)
               ifError = true;
             if (value == STRING_VALUE) {
-              value = 1.0e10;
+              value = OneE10;
               // tiny element - string
               const char *s = cardReader_->valueString();
               assert(*s == '=');
@@ -2279,7 +2279,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             } else {
               ifError = true;
             }
-            if (value > 1.0e25)
+            if (value > OneE25)
               value = infinity_;
             colupper_[icolumn] = value;
             if (columnType[icolumn] == COIN_UNSET_BOUND) {
@@ -2289,10 +2289,10 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             }
             break;
           case COIN_LO_BOUND:
-            if (value == -1.0e100)
+            if (value == -OneE100)
               ifError = true;
             if (value == STRING_VALUE) {
-              value = -1.0e10;
+              value = -OneE10;
               // tiny element - string
               const char *s = cardReader_->valueString();
               assert(*s == '=');
@@ -2309,7 +2309,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             } else {
               ifError = true;
             }
-            if (value < -1.0e25)
+            if (value < -OneE25)
               value = -infinity_;
             collower_[icolumn] = value;
             if (columnType[icolumn] == COIN_UNSET_BOUND) {
@@ -2319,7 +2319,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             }
             break;
           case COIN_FX_BOUND:
-            if (value == -1.0e100)
+            if (value == -OneE100)
               ifError = true;
             if (value == STRING_VALUE) {
               value = 0.0;
@@ -2394,7 +2394,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
               addString(numberRows_ + 2, icolumn, s + 1);
             }
 #if 0
-	    if ( value == -1.0e100 ) 
+	    if ( value == -OneE100 ) 
 	      ifError = true;
 	    if ( columnType[icolumn] == COIN_UNSET_BOUND ) {
 	    } else if ( columnType[icolumn] == COIN_LO_BOUND ||
@@ -2409,7 +2409,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
 	      ifError = true;
 	    }
 #else
-            if (value == -1.0e100) {
+            if (value == -OneE100) {
               value = infinity_;
               if (columnType[icolumn] != COIN_UNSET_BOUND && columnType[icolumn] != COIN_LO_BOUND && columnType[icolumn] != COIN_LI_BOUND && columnType[icolumn] != COIN_MI_BOUND) {
                 ifError = true;
@@ -2427,7 +2427,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
               }
             }
 #endif
-            if (value > 1.0e25)
+            if (value > OneE25)
               value = infinity_;
             colupper_[icolumn] = value;
             if (columnType[icolumn] == COIN_UNSET_BOUND) {
@@ -2441,7 +2441,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             }
             break;
           case COIN_LI_BOUND:
-            if (value == -1.0e100)
+            if (value == -OneE100)
               ifError = true;
             if (value == STRING_VALUE) {
               value = TOO_SMALL_FLOAT;
@@ -2461,7 +2461,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
             } else {
               ifError = true;
             }
-            if (value < -1.0e25)
+            if (value < -OneE25)
               value = -infinity_;
             collower_[icolumn] = value;
             if (columnType[icolumn] == COIN_UNSET_BOUND) {
@@ -2497,7 +2497,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
               assert(*s == '=');
               addString(numberRows_ + 2, icolumn, s + 1);
             }
-            if (value == -1.0e100 || value == 0.0) {
+            if (value == -OneE100 || value == 0.0) {
               value = infinity_;
               if (columnType[icolumn] != COIN_UNSET_BOUND && columnType[icolumn] != COIN_LO_BOUND && columnType[icolumn] != COIN_LI_BOUND) {
                 ifError = true;
@@ -2514,7 +2514,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
                 ifError = true;
               }
             }
-            if (value > 1.0e25)
+            if (value > OneE25)
               value = infinity_;
             colupper_[icolumn] = value;
             if (columnType[icolumn] == COIN_UNSET_BOUND) {
@@ -2589,7 +2589,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
         if (icolumn >= 0) {
           //integerType_[icolumn]=2;
           FloatT value = cardReader_->value();
-          if (value == -1.0e100)
+          if (value == -OneE100)
             value = FloatT(cardReader_->rowName()); // try from row name
           which[numberInSet] = icolumn;
           weights[numberInSet++] = value;
@@ -2634,7 +2634,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
           if (colupper_[icolumn] > MAX_INTEGER)
             colupper_[icolumn] = MAX_INTEGER;
           // clean up to allow for bad reads on 1.0e2 etc
-          if (colupper_[icolumn] < 1.0e10) {
+          if (colupper_[icolumn] < OneE10) {
             FloatT value = colupper_[icolumn];
             FloatT value2 = floor(value + 0.5);
             if (value != value2) {
@@ -2642,7 +2642,7 @@ int CoinMpsIO::readMps(int &numberSets, CoinSet **&sets)
                 colupper_[icolumn] = value2;
             }
           }
-          if (collower_[icolumn] > -1.0e10) {
+          if (collower_[icolumn] > -OneE10) {
             FloatT value = collower_[icolumn];
             FloatT value2 = floor(value + 0.5);
             if (value != value2) {
@@ -3618,7 +3618,7 @@ int CoinMpsIO::readBasis(const char *filename, const char *extension,
     }
     if (iColumn >= 0) {
       FloatT value = cardReader_->value();
-      if (solution && value > -1.0e50)
+      if (solution && value > -OneE50)
         solution[iColumn] = value;
       int iRow = -1;
       switch (cardReader_->mpsType()) {
@@ -3750,7 +3750,7 @@ void CoinConvertDouble(int section, int formatType, FloatT value, char outputVal
 {
   if (formatType == 0) {
     bool stripZeros = true;
-    if (CoinAbs(value) < 1.0e40) {
+    if (CoinAbs(value) < OneE40) {
       int power10, decimal;
       if (value >= 0.0) {
         power10 = static_cast< int >(log10(value));
@@ -3845,7 +3845,7 @@ void CoinConvertDouble(int section, int formatType, FloatT value, char outputVal
       outputValue[i] = ' ';
     outputValue[12] = '\0';
   } else if (formatType == 1) {
-    if (CoinAbs(value) < 1.0e40) {
+    if (CoinAbs(value) < OneE40) {
       memset(outputValue, ' ', 24);
       sprintf(outputValue, "%.16g", (double)value);
       // take out blanks
@@ -4186,8 +4186,8 @@ int CoinMpsIO::writeMps(const char *filename, int compression,
     if (sense[i] != 'R') {
       line.append(1, sense[i]);
     } else {
-      if (rowLower[i] > -1.0e30) {
-        if (rowUpper[i] < 1.0e30) {
+      if (rowLower[i] > -OneE30) {
+        if (rowUpper[i] < OneE30) {
           line.append("L");
         } else {
           sense[i] = 'G';
@@ -4209,7 +4209,7 @@ int CoinMpsIO::writeMps(const char *filename, int compression,
 
   bool ifBounds = false;
   FloatT largeValue = infinity_;
-  largeValue = 1.0e30; // safer
+  largeValue = OneE30; // safer
 
   const FloatT *columnLower = getColLower();
   const FloatT *columnUpper = getColUpper();
@@ -4420,7 +4420,7 @@ int CoinMpsIO::writeMps(const char *filename, int compression,
     for (i = 0; i < numberRows_; i++) {
       if (sense[i] == 'R') {
         FloatT value = rowUpper[i] - rowLower[i];
-        if (value < 1.0e30) {
+        if (value < OneE30) {
           convertDouble(1, formatType, value,
             outputValue[numberFields],
             rowNames[i],
