@@ -64,10 +64,10 @@ End`;
       let solveLpProblem = null;
 
       CLP.then((clp) => {
-        console.log("hehehe");
+        console.log("WebWorker initialized!");
         solveLpProblem = async (lpProblem) => {
-          console.log('about to call clp.solveAsync')
-          const solution = await clp.solveAsync(lpProblem, 9);
+          console.log(await clp.version());
+          const solution = await clp.solve(lpProblem, 9);
           console.log(solution);
           return solution;
         };
