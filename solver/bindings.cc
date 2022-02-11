@@ -13,6 +13,17 @@ std::string solve(std::string problem, int precision)
 #include <emscripten/bind.h>
 #include <sstream>
 
+#ifdef __EMSCRIPTEN_PTHREADS__
+#include <future>
+void solveAsync(std::string problem, int precision, emscripten::val cb)
+{
+    std::async([&]() {
+        const auto result = solve(problem, precision);
+        cb(emscripten::val(result));
+    });
+}
+#endif
+
 std::string bnRound(const std::string x)
 {
     return mp::round(FloatT(x)).str();
@@ -39,6 +50,9 @@ EMSCRIPTEN_BINDINGS(solver)
     function("bnRound", &bnRound);
     function("bnFloor", &bnFloor);
     function("solve", &solve);
+    #ifdef __EMSCRIPTEN_PTHREADS__
+    function("solveAsync", &solveAsync);
+    #endif
     function("version", &version);
 
     class_<ClpWrapper>("ClpWrapper")
