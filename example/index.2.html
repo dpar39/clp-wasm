@@ -66,7 +66,9 @@ End`;
       CLP.then((clp) => {
         console.log("hehehe");
         solveLpProblem = async (lpProblem) => {
+          console.log('about to call clp.solveAsync')
           const solution = await clp.solveAsync(lpProblem, 9);
+          console.log(solution);
           return solution;
         };
       });

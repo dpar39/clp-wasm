@@ -29,14 +29,17 @@ if [ $BUILD_PLATFORM == "x64" ]; then
     cmake -G Ninja -B$BUILD_DIR \
         -DCMAKE_BUILD_TYPE=${BUILD_CONFIG} .
 fi
-cd $BUILD_DIR && ninja && cd ..
+pushd $BUILD_DIR && ninja 
+popd
 
-node bundle-with-wasm.js
 
 if [ $BUILD_PLATFORM == "wasm" ]; then
     cp $BUILD_DIR/clp-*.wasm* .
     cp $BUILD_DIR/clp-*.js* .
-    cp $BUILD_DIR/clp-*.wasm* example/
-    cp $BUILD_DIR/clp-*.js* example/
+
+    node bundle-with-wasm.js
+
+    #cp $BUILD_DIR/clp-*.wasm* example/
+    cp ./clp-wasm.all.js example/
 fi
 

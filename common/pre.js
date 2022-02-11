@@ -1,4 +1,5 @@
 function initialize(resolve) {
+  var Module = typeof Module !== "undefined" ? Module : {};
   var wasmBlobStr = null;
   if (wasmBlobStr) {
     if (typeof atob === "function")
@@ -171,8 +172,8 @@ function initialize(resolve) {
     var api = (function () {
       var methods = {
         solve: function (lpProblem, precision) {
-          if (typeof precision === "undefined") { 
-            precision = 9; 
+          if (typeof precision === "undefined") {
+            precision = 9;
           }
           try {
             var solutionStr = m.solve(lpProblem, precision);
@@ -200,10 +201,11 @@ function initialize(resolve) {
       self.onmessage = function (event) {
         var methodName = event.data.method;
         var args = event.data.args;
-        var id = event.data.id;
+        var callId = event.data.callId;
         // execute the method now and get result
-        result= api[methodName](args);
-        postMessage({result: result, id: id});
+        result = api[methodName].apply(null, args);
+        console.log(result)
+        postMessage({ result: result, callId: callId });
       };
       postMessage({ initialized: true });
     } else {
