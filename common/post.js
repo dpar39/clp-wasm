@@ -1,8 +1,18 @@
 }
 
 var CLP = null;
+function isBrowser() {
+  if (typeof process === "object" &&
+      typeof require === "function") {
+      return false;
+  }
+  if (typeof importScripts === "function") {
+      return false;
+  }
+  return typeof window === "object";
+}
 
-if (typeof window === 'object') {
+if (isBrowser()) {
   function initWebWorker(resolve) {
     let workerCode = `(${initialize.toString().trim()})()`;
     const objectUrl = URL.createObjectURL(new Blob([workerCode], { type: "text/javascript" }));
