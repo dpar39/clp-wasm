@@ -192,5 +192,22 @@ describe("clp-wasm test suite", () => {
     expect(solution).toMatchObject(expected);
     clp.delete();
   });
+
+  test("Clp solve: tinlake problem large", () => {
+    const lpContent = `Maximize
+    obj: +10000 tinInvest +1000 dropInvest +100000 tinRedeem +1000000 dropRedeem 
+  Subject To
+    reserve: tinInvest + dropInvest - tinRedeem - dropRedeem  >= -200000000000000000001
+    maxReserve: tinInvest + dropInvest - tinRedeem - dropRedeem  <= 9800000000000000000000
+    minTINRatioLb: +850000000000000000000000000 tinInvest -150000000000000000000000000 dropInvest -850000000000000000000000000 tinRedeem +150000000000000000000000000 dropRedeem  >= -50000000000000000000000000000000000000000000000
+    maxTINRatioLb: -800000000000000000000000000 tinInvest +200000000000000000000000000 dropInvest +800000000000000000000000000 tinRedeem -200000000000000000000000000 dropRedeem  >= 0
+  Bounds
+    0 <= tinInvest  <= 200000000000000000000
+    0 <= dropInvest <= 400000000000000000000
+    0 <= tinRedeem  <= 100000000000000000000
+    0 <= dropRedeem <= 300000000000000000000
+  End`
+    const result = solver.solve(lpContent);
+  });
 });
 

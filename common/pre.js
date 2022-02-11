@@ -1,4 +1,4 @@
-var clpPromise = new Promise(function (resolve) {
+function initialize(resolve) {
   var wasmBlobStr = null;
   if (wasmBlobStr) {
     if (typeof atob === "function")
@@ -168,7 +168,7 @@ var clpPromise = new Promise(function (resolve) {
 
   Module["onRuntimeInitialized"] = function () {
     var m = this;
-    this["clp"] = (function () {
+    var api = (function () {
       var methods = {
         solve: function (lpProblem, precision) {
           if (typeof precision === "undefined") { 
@@ -193,6 +193,21 @@ var clpPromise = new Promise(function (resolve) {
       Object.assign(pub, constants, methods);
       return Object.freeze(pub);
     })();
-    resolve(this["clp"]);
+
+    this["clp"] = api;
+
+    if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
+      self.onmessage = function (event) {
+        var methodName = event.data.method;
+        var args = event.data.args;
+        var id = event.data.id;
+        // execute the method now and get result
+        result= api[methodName](args);
+        postMessage({result: result, id: id});
+      };
+      postMessage({ initialized: true });
+    } else {
+      resolve(this["clp"]);
+    }
   };
-//});
+//};
