@@ -4,10 +4,10 @@ build_*
 .vs/*
 .vscode/*
 build/
-clp-wasm.js
-clp-wasm.wasm
-clp-wasm.js.map
-clp-wasm.all.js
+clp-*.js
+clp-*.wasm
+clp-*.js.map
+clp-*.all.js
 node_modules
 .ccache
 .trash

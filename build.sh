@@ -31,10 +31,12 @@ if [ $BUILD_PLATFORM == "x64" ]; then
 fi
 cd $BUILD_DIR && ninja && cd ..
 
+node bundle-with-wasm.js
+
 if [ $BUILD_PLATFORM == "wasm" ]; then
-    cp $BUILD_DIR/clp-wasm.wasm* .
-    cp $BUILD_DIR/clp-wasm.js* .
-    cp $BUILD_DIR/clp-wasm.wasm* example/
-    cp $BUILD_DIR/clp-wasm.js* example/
+    cp $BUILD_DIR/clp-*.wasm* .
+    cp $BUILD_DIR/clp-*.js* .
+    cp $BUILD_DIR/clp-*.wasm* example/
+    cp $BUILD_DIR/clp-*.js* example/
 fi
 
