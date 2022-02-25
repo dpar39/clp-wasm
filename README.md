@@ -19,7 +19,7 @@ npm run test # Optionally run the test suite
 
 ## Usage
 
-For a browser-based example, please look at the live demo.
+For a browser-based example, please look at the live demo. When running in a browser CLP code will run in a web worker to avoid blocking the UI thread.
 
 To install from NPM
 
@@ -30,39 +30,18 @@ npm install clp-wasm
 Then import the library in Javasript and use it:
 
 ```javascript
-require("clp-wasm/clp-wasm").then((clp) => {
+require("clp-wasm/clp-wasm").then(async (clp) => {
   const lp = `Maximize
    obj: + 0.6 x1 + 0.5 x2
    Subject To
    cons1: + x1 + 2 x2 <= 1
    cons2: + 3 x1 + x2 <= 2
    End`;
-  console.log(clp.solve(lp)); // Prints a result object with solution values, objective, etc.
+  console.log(await clp.solve(lp)); // Prints a result object with solution values, objective, etc.
 });
 ```
 
-The same problem can also be solved with a lower level API:
-
-```javascript
-require("clp-wasm/clp-wasm").then((clp) => {
-  const wrapper = new clp.ClpWrapper();
-  const InfU = +Number.MAX_VALUE;
-  const InfL = -Number.MAX_VALUE;
-  const obj = [-0.6, -0.5]; // expressed as a minimization problem
-  const col_lb = [InfL, InfL]; // variable lower bounds
-  const col_up = [InfU, InfU]; // variable upper bounds
-  const row_lb = [InfL, InfL]; // row constraints lower bounds
-  const row_ub = [1, 2]; // row constraints upper bounds
-  const matrix = [1, 2, 3, 1]; // Matrix coefficients
-  let success = wrapper.loadProblem(obj, col_lb, col_up, row_lb, row_ub, matrix); // returns true if the problem dimensions matched
-  wrapper.primal();
-  const solution = wrapper.getSolutionArray(1); // The solution vector
-  const infeasibilityRay = wrapper.getInfeasibilityRay(1); // A vector proving infeasability if the problem is over-constrained (empty in this case)
-  const unboundedRay = wrapper.getUnboundedRay(1); // A vector proving the problem is unbounded (empty in this case)
-});
-```
-
-If you don't want to deal with the `clp-wasm.wasm` asset contet and don't mind the extra size and Base64 conversion, `clp-wasm.all.js` includes the wasm blob as a Base64 string can be used without any extra dependencies.
+If you don't want to deal with the `clp-wasm.wasm` asset content and don't mind the extra size and Base64 conversion, `clp-wasm.all.js` includes the wasm blob as a Base64 string can be used without any extra dependencies.
 
 ## Diving into the code
 

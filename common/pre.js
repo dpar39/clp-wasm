@@ -185,7 +185,6 @@ function initialize(resolve) {
         },
         toLpFormat: toLpFormat,
         version: m.version,
-        ClpWrapper: m.ClpWrapper,
         bnCeil: m.bnCeil,
         bnFloor: m.bnFloor,
         bnRound: m.bnRound,

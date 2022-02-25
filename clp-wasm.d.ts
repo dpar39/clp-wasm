@@ -58,16 +58,16 @@ interface CLP {
     readonly GLP_NOFEAS: number;  /* no feasible solution exists */
     readonly GLP_OPT: number;     /* solution is optimal */
     readonly GLP_UNBND: number;   /* solution is unbounded */
+    
+    version(): Promise<string>;
 
-    version(): string;
+    solve(lp: string, precision: number): Promise<Result>
 
-    createLp(lp: LP): string;
+    toLpFormat(lp: LP): Promise<string>; /* Converts LP problem to LP format string */
 
-    solve(lp: string, precision: number): Result
-
-    bnRound(bn: string): string; /* rounds a big number from a string */
-    bnCeil(bn: string): string; /* ceil of a big number from a string */
-    bnFloor(bn: string): string; /* floor of a big number from a string */
+    bnRound(bn: string): Promise<string>; /* rounds a big number from a string */
+    bnCeil(bn: string): Promise<string>; /* ceil of a big number from a string */
+    bnFloor(bn: string): Promise<string>; /* floor of a big number from a string */
 }
 
 export {
