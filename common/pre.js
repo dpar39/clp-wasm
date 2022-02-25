@@ -195,20 +195,33 @@ function initialize(resolve) {
       return Object.freeze(pub);
     })();
 
-    //this["clp"] = api;
-
     if (typeof WorkerGlobalScope !== 'undefined' && self instanceof WorkerGlobalScope) {
       self.onmessage = function (event) {
         var methodName = event.data.method;
         var args = event.data.args;
         var callId = event.data.callId;
         // execute the method now and get result
-        result = api[methodName].apply(null, args);
+        var result = api[methodName].apply(null, args);
         postMessage({ result: result, callId: callId });
       };
       postMessage({ initialized: true });
     } else {
-      resolve(api);
+      function makeMethod(methodName) {
+        return async function () {
+          var args = [];
+          for (var k = 0; k < arguments.length; ++k) { 
+            args.push(arguments[k]); 
+          }
+          return new Promise(accept => accept(api[methodName].apply(null, args)));
+        }
+      }
+      resolve({
+        solve: makeMethod('solve'),
+        version: makeMethod('version'),
+        bnCeil: makeMethod('bnCeil'),
+        bnFloor: makeMethod('bnFloor'),
+        bnRound: makeMethod('bnRound')
+      });
     }
   };
 //};
