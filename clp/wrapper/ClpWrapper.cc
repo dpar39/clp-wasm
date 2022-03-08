@@ -6,6 +6,8 @@
 #include <fstream>
 #include <string>
 
+#include <boost/multiprecision/number.hpp>
+
 FILE * CbcOrClpReadCommand = stdin;
 int CbcOrClpRead_mode = 1;
 
@@ -295,6 +297,29 @@ bool ClpWrapper::loadProblem(std::vector<FloatT> objec,
     return true;
 }
 
+// free functions
+std::string bnRound(const std::string & x)
+{
+    return mp::round(FloatT(x)).str();
+}
+std::string bnCeil(const std::string & x)
+{
+    return mp::ceil(FloatT(x)).str();
+}
+std::string bnFloor(const std::string & x)
+{
+    return mp::floor(FloatT(x)).str();
+}
+std::string version()
+{
+    return std::string(CLP_VERSION);
+}
+std::string solve(std::string problem, int precision)
+{
+    ClpWrapper clpWrapper;
+    return clpWrapper.solve(problem, precision);
+}
+
 #ifdef __EMSCRIPTEN__
 std::vector<FloatT> vecFromJS(const emscripten::val & a)
 {
@@ -352,4 +377,37 @@ val ClpWrapper::getUnboundedRay(int precision) const
     const auto dim = _model->getNumCols();
     return vecToJS(toFloatVector(_model->unboundedRay(), dim), precision);
 }
+#else
+char * to_c_str(const std::string & str)
+{
+    int n = str.length();
+    auto * p = new char[n + 1];
+    strcpy(p, str.c_str());
+    p[n] = '\0';
+    return p;
+}
+extern "C"
+{
+    char * clp_version()
+    {
+        return to_c_str(std::string(CLP_VERSION));
+    }
+    char * clp_solve(char * problem, int precision)
+    {
+        return to_c_str(solve(std::string(problem), precision));
+    }
+    char * bn_round(char * x)
+    {
+        return to_c_str(bnRound(std::string(x)));
+    }
+    char * bn_ceil(char * x)
+    {
+        return to_c_str(bnCeil(std::string(x)));
+    }
+    char * bn_floor(char * x)
+    {
+        return to_c_str(bnFloor(std::string(x)));
+    }
+}
+
 #endif

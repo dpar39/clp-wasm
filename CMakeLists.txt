@@ -43,9 +43,10 @@ include_directories(common)
 # CLP library
 add_definitions(-DHAVE_CONFIG_H -DCLP_BUILD -DCOINUTILS_BUILD -DCOIN_HAS_CLP)
 include_directories(clp/src)
+include_directories(clp/wrapper)
 file(GLOB CLP_CXX_FILES "clp/src/*.cpp")
-add_library(libclp ${CLP_CXX_FILES} )
-target_link_libraries(libclp ${Boost_LIBRARIES} )
+add_library(libclp ${CLP_CXX_FILES} "clp/wrapper/ClpWrapper.cc" )
+target_link_libraries(libclp ${Boost_LIBRARIES})
 
 if(NOT EMSCRIPTEN)
     # CLP command line application
@@ -54,7 +55,6 @@ if(NOT EMSCRIPTEN)
     target_link_libraries(clp ${Boost_LIBRARIES} libclp)
 endif()
 
-# CLP wrapper
-file(GLOB SOLVER_CXX_FILES "solver/*.cc")
-add_executable(clp-wasm ${SOLVER_CXX_FILES})
+# CLP JS bindings
+add_executable(clp-wasm "solver/bindings.cc")
 target_link_libraries(clp-wasm ${Boost_LIBRARIES} libclp) 

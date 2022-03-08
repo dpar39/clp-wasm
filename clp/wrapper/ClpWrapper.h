@@ -55,3 +55,9 @@ private:
 
     std::shared_ptr<ClpSimplex> _model;
 };
+
+std::string version();
+std::string solve(std::string problem, int precision);
+std::string bnRound(const std::string & x);
+std::string bnCeil(const std::string & x);
+std::string bnFloor(const std::string & x);
